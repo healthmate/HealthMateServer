@@ -100,6 +100,18 @@ class User(db.Model):
         """
         return User.query.filter_by(username=username).first()
 
+    @staticmethod
+    def getusername(user_id):
+        """
+        Check a user by their email address
+        :param user_id:
+        :return:
+        """
+        user = User.query.filter_by(id=user_id).first()
+
+        return user.username
+
+
 
 class Post(db.Model):
     __tablename__ = 'posts'

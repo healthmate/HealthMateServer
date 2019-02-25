@@ -149,7 +149,8 @@ def getpost(current_user):
             'description': item.description,
             'image_url': item.image_url,
             'create_at': item.create_at,
-            'user_id': item.user_id
+            'user_id': item.user_id,
+            'username': User.getusername(item.user_id)
         })
     for person in community:
         data = Post.get_posts(person.community_id)
@@ -158,7 +159,8 @@ def getpost(current_user):
                 'description': i.description,
                 'image_url': i.image_url,
                 'create_at': i.create_at,
-                'user_id': i.user_id
+                'user_id': i.user_id,
+                'username': User.getusername(i.user_id)
             })
 
     return jsonify(posts), 200
