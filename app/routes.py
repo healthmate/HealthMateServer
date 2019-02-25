@@ -105,6 +105,7 @@ def search(current_user):
                 isFollowing = True
 
         data = {
+            'user_id': user.id,
             'username': user.username,
             'community': isFollowing
         }
