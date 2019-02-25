@@ -73,6 +73,40 @@ def logout():
     return response('failed', 'Provide an authorization header', 403)
 
 
+@routes.route('/getuser', methods=['POST'])
+def getuser():
+    values = request.get_json()
+    required = ['user_id']
+    if not all(k in values for k in required):
+        return 'Missing values', 400
+    user = User.get_by_id(values.get('user_id'))
+    data = {
+        'username': user.username
+    }
+    return jsonify(data), 200
+
+
+@routes.route('/search', methods=['POST'])
+@token_required
+def search(current_user):
+    isFollowing = False
+    values = request.get_json()
+    required = ['username']
+    if not all(k in values for k in required):
+        return 'Missing values', 400
+    user = User.get_by_username(values.get('username'))
+    community = Community.get_community(current_user.id)
+    for person in community:
+        if person.community_id == user.id:
+            isFollowing = True
+
+    data = {
+        'username': user.username,
+        'community': isFollowing
+    }
+    return jsonify(data), 200
+
+
 @routes.route('/posts', methods=['POST'])
 @token_required
 def post(current_user):
@@ -125,14 +159,14 @@ def getpost(current_user):
 
 @routes.route('/community/request/<user_id>', methods=['POST'])
 @token_required
-def community_request(current_user,user_id):
+def community_request(current_user, user_id):
     """
     api to request to join community
     :param current_user:
     :param user_id:
     :return:
     """
-    community = Community(community_id=user_id,user_id=current_user.id)
+    community = Community(community_id=user_id, user_id=current_user.id)
     community.save()
     return response('success', 'Successfully joined community', 200)
 
@@ -148,4 +182,3 @@ def get_community(current_user):
             'community_id': person.community_id
         })
     return jsonify(response), 200
-
