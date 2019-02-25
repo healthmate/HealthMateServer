@@ -80,9 +80,12 @@ def getuser():
     if not all(k in values for k in required):
         return 'Missing values', 400
     user = User.get_by_id(values.get('user_id'))
-    data = {
-        'username': user.username
-    }
+    if user:
+        data = {
+            'username': user.username
+        }
+    else:
+        return response('failed', 'User Does not exist', 401)
     return jsonify(data), 200
 
 
@@ -95,15 +98,19 @@ def search(current_user):
     if not all(k in values for k in required):
         return 'Missing values', 400
     user = User.get_by_username(values.get('username'))
-    community = Community.get_community(current_user.id)
-    for person in community:
-        if person.community_id == user.id:
-            isFollowing = True
+    if user:
+        community = Community.get_community(current_user.id)
+        for person in community:
+            if person.community_id == user.id:
+                isFollowing = True
 
-    data = {
-        'username': user.username,
-        'community': isFollowing
-    }
+        data = {
+            'username': user.username,
+            'community': isFollowing
+        }
+    else:
+        return response('failed', 'User Does not exist', 401)
+
     return jsonify(data), 200
 
 
