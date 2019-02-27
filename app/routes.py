@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, Blueprint
-from app.model import User, Post, Community, BlackListToken
+from app.model import User, Post, Community, BlackListToken, Comments, Likes
 import re
 from app.helper import response, response_auth, token_required
 from app import bcrypt
@@ -80,12 +80,32 @@ def getuser():
     if not all(k in values for k in required):
         return 'Missing values', 400
     user = User.get_by_id(values.get('user_id'))
+    count = Community.get_community_count(values.get('user_id'))
+    post_count = Post.get_post_count(values.get('user_id'))
     if user:
         data = {
-            'username': user.username
+            'user_id': user.id,
+            'username': user.username,
+            'community': count,
+            'posts': post_count
         }
     else:
         return response('failed', 'User Does not exist', 401)
+    return jsonify(data), 200
+
+
+@routes.route('/getuserprofile', methods=['POST'])
+@token_required
+def getuserprofile(current_user):
+    count = Community.get_community_count(current_user.id)
+    post_count = Post.get_post_count(current_user.id)
+    data = {
+        'user_id': current_user.id,
+        'username': current_user.username,
+        'community': count,
+        'posts': post_count
+    }
+
     return jsonify(data), 200
 
 
@@ -135,6 +155,42 @@ def post(current_user):
     return response('success', 'Successfully posted', 200)
 
 
+@routes.route('/getuserposts', methods=['GET'])
+@token_required
+def getuserpost(current_user):
+    """
+    get posts
+    :return:
+    """
+    posts = []
+    post = Post.get_posts(current_user.id)
+    comments = []
+
+    for item in post:
+
+        comments.clear()
+        comment = Comments.getcomments(item.id)
+
+        for c in comment:
+            comments.append({
+                'comment': c.comment,
+                'username': User.getusername(c.user_id),
+                'create_at': c.create_at
+            })
+
+        posts.append({
+            'post_id': item.id,
+            'description': item.description,
+            'image_url': item.image_url,
+            'create_at': item.create_at,
+            'user_id': item.user_id,
+            'username': User.getusername(item.user_id),
+            'likes': item.likes,
+            'comments': comments
+        })
+    return jsonify(posts), 200
+
+
 @routes.route('/getposts', methods=['GET'])
 @token_required
 def getpost(current_user):
@@ -143,25 +199,54 @@ def getpost(current_user):
     :return:
     """
     posts = []
+    comments = []
     post = Post.get_posts(current_user.id)
     community = Community.get_community(current_user.id)
     for item in post:
+
+        comments.clear()
+        comment = Comments.getcomments(item.id)
+
+        for c in comment:
+            comments.append({
+                'comment': c.comment,
+                'username': User.getusername(c.user_id),
+                'create_at': c.create_at
+            })
+
         posts.append({
+            'post_id': item.id,
             'description': item.description,
             'image_url': item.image_url,
             'create_at': item.create_at,
             'user_id': item.user_id,
-            'username': User.getusername(item.user_id)
+            'username': User.getusername(item.user_id),
+            'likes': item.likes,
+            'comments': comments
         })
     for person in community:
         data = Post.get_posts(person.community_id)
         for i in data:
+
+            comments.clear()
+            comment = Comments.getcomments(i.id)
+
+            for c in comment:
+                comments.append({
+                    'comment': c.comment,
+                    'username': User.getusername(c.user_id),
+                    'create_at': c.create_at
+                })
+
             posts.append({
+                'post_id': i.id,
                 'description': i.description,
                 'image_url': i.image_url,
                 'create_at': i.create_at,
                 'user_id': i.user_id,
-                'username': User.getusername(i.user_id)
+                'username': User.getusername(i.user_id),
+                'likes': i.likes,
+                'comments': comments
             })
 
     return jsonify(posts), 200
@@ -190,5 +275,38 @@ def get_community(current_user):
         response.append({
             'user_id': person.user_id,
             'community_id': person.community_id
+        })
+    return jsonify(response), 200
+
+
+@routes.route('/like/<post_id>', methods=['POST'])
+@token_required
+def like(current_user, post_id):
+
+    like = Likes(user_id=current_user.id, post_id=post_id)
+    like.save()
+    return response('success', 'Successfully liked post', 200)
+
+
+@routes.route('/comment', methods=['POST'])
+@token_required
+def comment(current_user):
+    values = request.get_json()
+    required = ['comment', 'post_id']
+    if not all(k in values for k in required):
+        return 'Missing values', 400
+    comment = Comments(comment=values.get('comment'), post_id=values.get('post_id'), user_id=current_user.id)
+    comment.save()
+    return response('success', 'Commented successfully', 200)
+
+
+@routes.route('/getlikers/<post_id>', methods=['POST'])
+def get_likers(post_id):
+
+    response = []
+    likers = Likes.getlikers(post_id=post_id)
+    for user in likers:
+        response.append({
+            'username': User.getusername(user.user_id)
         })
     return jsonify(response), 200

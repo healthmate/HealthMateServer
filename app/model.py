@@ -80,6 +80,7 @@ class User(db.Model):
         :param user_id:
         :return: User or None
         """
+
         return User.query.filter_by(id=user_id).first()
 
     @staticmethod
@@ -122,12 +123,15 @@ class Post(db.Model):
     description = db.Column(db.String(255), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     create_at = db.Column(db.DateTime, nullable=False)
+    likes = db.Column(db.Integer, nullable=False)
+    comments = db.relationship('Comments', backref='comments', lazy='dynamic')
 
     def __init__(self, description, image_url, user_id):
         self.image_url = image_url
         self.description = description
         self.user_id = user_id
         self.create_at = datetime.datetime.now()
+        self.likes = 0
 
     def save(self):
         """
@@ -138,10 +142,70 @@ class Post(db.Model):
         db.session.commit()
 
     @staticmethod
+    def like(post_id):
+        post = Post.query.filter_by(id=post_id).first()
+        post.likes = post.likes + 1
+        return post.likes
+
+    @staticmethod
     def get_posts(user_id):
         post = Post.query.filter_by(user_id=user_id).all()
-
         return post
+
+    @staticmethod
+    def get_post_count(user_id):
+        return Post.query.filter_by(user_id=user_id).all().count()
+
+
+class Comments(db.Model):
+    __tablename__ = 'comments'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    comment = db.Column(db.String(255), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+    create_at = db.Column(db.DateTime, nullable=False)
+
+    def __init__(self, comment, post_id, user_id):
+        self.user_id = user_id
+        self.comment = comment
+        self.post_id = post_id
+        self.create_at = datetime.datetime.now()
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    @staticmethod
+    def getcomments(post_id):
+        return Comments.query.filter_by(post_id=post_id).all()
+
+
+class Likes(db.Model):
+    __tablename__ = 'likes'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+    create_at = db.Column(db.DateTime, nullable=False)
+
+    def __init__(self, user_id, post_id):
+        self.user_id = user_id
+        self.post_id = post_id
+        self.create_at = datetime.datetime.now()
+
+    def save(self):
+        Post.like(post_id=self.post_id)
+        db.session.add(self)
+        db.session.commit()
+
+    @staticmethod
+    def getlikers(post_id):
+        return Likes.query.filter_by(post_id=post_id).all()
+
+    @staticmethod
+    def getlikers_count(post_id):
+        return Likes.query.filter_by(post_id=post_id).all().count
 
 
 class Community(db.Model):
@@ -161,6 +225,10 @@ class Community(db.Model):
     @staticmethod
     def get_community(user_id):
         return Community.query.filter_by(user_id=user_id).all()
+
+    @staticmethod
+    def get_community_count(user_id):
+        return Community.query.filter_by(user_id=user_id).all().count()
 
 
 class BlackListToken(db.Model):
