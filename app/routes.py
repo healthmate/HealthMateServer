@@ -300,6 +300,21 @@ def comment(current_user):
     return response('success', 'Commented successfully', 200)
 
 
+@routes.route('/getcomment/<post_id>', methods=['POST'])
+@token_required
+def comment(post_id):
+    comments = []
+    comment = Comments.getcomments(post_id)
+
+    for c in comment:
+        comments.append({
+            'comment': c.comment,
+            'username': User.getusername(c.user_id),
+            'create_at': c.create_at
+        })
+    return jsonify(comments), 200
+
+
 @routes.route('/getlikers/<post_id>', methods=['POST'])
 def get_likers(post_id):
 
