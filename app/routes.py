@@ -333,6 +333,6 @@ def check_liker(current_user, post_id):
 
     likers = Likes.getlikers(post_id=post_id)
     for user in likers:
-        if user.id == current_user.id:
+        if user.username == current_user.username:
             return "LIKED", 200
     return "NOT LIKED", 401
