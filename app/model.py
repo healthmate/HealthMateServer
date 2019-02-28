@@ -123,7 +123,7 @@ class Post(db.Model):
     description = db.Column(db.String(255), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     create_at = db.Column(db.DateTime, nullable=False)
-    likes = db.Column(db.Integer, nullable=False)
+    likes = db.Column(db.Integer, nullable=True)
     comments = db.relationship('Comments', backref='comments', lazy='dynamic')
 
     def __init__(self, description, image_url, user_id):
