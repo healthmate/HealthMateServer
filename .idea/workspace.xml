@@ -77,17 +77,17 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/routes.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-44">
-              <caret line="284" lean-forward="true" selection-start-line="284" selection-end-line="284" />
+            <state relative-caret-position="405">
+              <caret line="335" column="16" lean-forward="true" selection-start-line="335" selection-start-column="16" selection-end-line="335" selection-end-column="16" />
               <folding>
                 <element signature="e#0#52#0" expanded="true" />
-                <marker date="1551389990460" expanded="true" signature="3839:4140" ph="..." />
-                <marker date="1551389990460" expanded="true" signature="4248:4879" ph="..." />
-                <marker date="1551389990460" expanded="true" signature="8938:9077" ph="..." />
-                <marker date="1551389990460" expanded="true" signature="9319:9893" ph="..." />
-                <marker date="1551389990460" expanded="true" signature="9973:9974" ph="..." />
-                <marker date="1551389990460" expanded="true" signature="9973:9979" ph="..." />
-                <marker date="1551389990460" expanded="true" signature="10304:10479" ph="..." />
+                <marker date="1551394281819" expanded="true" signature="3839:4140" ph="..." />
+                <marker date="1551394281819" expanded="true" signature="4248:4879" ph="..." />
+                <marker date="1551394281819" expanded="true" signature="8938:9077" ph="..." />
+                <marker date="1551394281819" expanded="true" signature="9319:9893" ph="..." />
+                <marker date="1551394281819" expanded="true" signature="9973:9974" ph="..." />
+                <marker date="1551394281819" expanded="true" signature="9973:9979" ph="..." />
+                <marker date="1551394281819" expanded="true" signature="10304:10474" ph="..." />
               </folding>
             </state>
           </provider>
@@ -231,7 +231,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24947146" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -358,17 +357,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/routes.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-44">
-          <caret line="284" lean-forward="true" selection-start-line="284" selection-end-line="284" />
+        <state relative-caret-position="405">
+          <caret line="335" column="16" lean-forward="true" selection-start-line="335" selection-start-column="16" selection-end-line="335" selection-end-column="16" />
           <folding>
             <element signature="e#0#52#0" expanded="true" />
-            <marker date="1551389990460" expanded="true" signature="3839:4140" ph="..." />
-            <marker date="1551389990460" expanded="true" signature="4248:4879" ph="..." />
-            <marker date="1551389990460" expanded="true" signature="8938:9077" ph="..." />
-            <marker date="1551389990460" expanded="true" signature="9319:9893" ph="..." />
-            <marker date="1551389990460" expanded="true" signature="9973:9974" ph="..." />
-            <marker date="1551389990460" expanded="true" signature="9973:9979" ph="..." />
-            <marker date="1551389990460" expanded="true" signature="10304:10479" ph="..." />
+            <marker date="1551394281819" expanded="true" signature="3839:4140" ph="..." />
+            <marker date="1551394281819" expanded="true" signature="4248:4879" ph="..." />
+            <marker date="1551394281819" expanded="true" signature="8938:9077" ph="..." />
+            <marker date="1551394281819" expanded="true" signature="9319:9893" ph="..." />
+            <marker date="1551394281819" expanded="true" signature="9973:9974" ph="..." />
+            <marker date="1551394281819" expanded="true" signature="9973:9979" ph="..." />
+            <marker date="1551394281819" expanded="true" signature="10304:10474" ph="..." />
           </folding>
         </state>
       </provider>
