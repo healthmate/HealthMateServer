@@ -154,7 +154,7 @@ class Post(db.Model):
 
     @staticmethod
     def get_post_count(user_id):
-        return Post.query.filter_by(user_id=user_id).all().count()
+        return Post.query.filter_by(user_id=user_id).count()
 
 
 class Comments(db.Model):
@@ -205,7 +205,7 @@ class Likes(db.Model):
 
     @staticmethod
     def getlikers_count(post_id):
-        return Likes.query.filter_by(post_id=post_id).all().count
+        return Likes.query.filter_by(post_id=post_id).count
 
 
 class Community(db.Model):

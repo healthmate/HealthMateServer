@@ -97,13 +97,13 @@ def getuser():
 @routes.route('/getuserprofile', methods=['POST'])
 @token_required
 def getuserprofile(current_user):
-    #count = Community.get_community_count(current_user.id)
-    #post_count = Post.get_post_count(current_user.id)
+    count = Community.get_community_count(current_user.id)
+    post_count = Post.get_post_count(current_user.id)
     data = {
         'user_id': current_user.id,
         'username': current_user.username,
-        'community': 3,
-        'posts': 5
+        'community': count,
+        'posts': post_count
     }
 
     return jsonify(data), 200
