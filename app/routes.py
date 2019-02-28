@@ -98,12 +98,12 @@ def getuser():
 @token_required
 def getuserprofile(current_user):
     count = Community.get_community_count(current_user.id)
-    post_count = Post.get_post_count(current_user.id)
+    #post_count = Post.get_post_count(current_user.id)
     data = {
         'user_id': current_user.id,
         'username': current_user.username,
         'community': count,
-        'posts': post_count
+        'posts': 5
     }
 
     return jsonify(data), 200
