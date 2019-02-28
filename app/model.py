@@ -205,7 +205,7 @@ class Likes(db.Model):
 
     @staticmethod
     def getlikers_count(post_id):
-        return Likes.query.filter_by(post_id=post_id).count
+        return Likes.query.filter_by(post_id=post_id).count()
 
 
 class Community(db.Model):
