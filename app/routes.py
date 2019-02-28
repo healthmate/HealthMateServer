@@ -326,3 +326,13 @@ def get_likers(post_id):
         })
     return jsonify(response), 200
 
+
+@routes.route('/checkliker/<post_id>', methods=['POST'])
+@token_required
+def check_liker(current_user, post_id):
+
+    likers = Likes.getlikers(post_id=post_id)
+    for user in likers:
+        if user.user_id == current_user.id:
+            return "LIKED", 200
+    return "NOT LIKED", 401
