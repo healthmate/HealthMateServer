@@ -154,7 +154,7 @@ class Post(db.Model):
 
     @staticmethod
     def get_post_count(user_id):
-        return Post.query.filter_by(user_id=user_id).count()
+        return len(Post.query.filter_by(user_id=user_id).all())
 
 
 class Comments(db.Model):
@@ -205,7 +205,7 @@ class Likes(db.Model):
 
     @staticmethod
     def getlikers_count(post_id):
-        return Likes.query.filter_by(post_id=post_id).count()
+        return len(Likes.query.filter_by(post_id=post_id).all())
 
 
 class Community(db.Model):
@@ -228,7 +228,7 @@ class Community(db.Model):
 
     @staticmethod
     def get_community_count(user_id):
-        return Community.query.filter_by(user_id=user_id).all().count()
+        return len(Community.query.filter_by(user_id=user_id).all())
 
 
 class BlackListToken(db.Model):
