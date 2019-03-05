@@ -301,12 +301,11 @@ def comment(current_user):
 
 
 @routes.route('/getcomment/<post_id>', methods=['POST'])
-@token_required
 def getcomment(post_id):
     comments = []
-    comment = Comments.getcomments(post_id=post_id)
+    commentobj = Comments.getcomments(post_id=post_id)
 
-    for c in comment:
+    for c in commentobj:
         comments.append({
             'comment': c.comment,
             'username': User.getusername(c.user_id),
