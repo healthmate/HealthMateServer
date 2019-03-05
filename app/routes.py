@@ -318,7 +318,12 @@ def getcomment(post_id):
 def get_commenteee():
     comments = []
     commentobj = Comments.getallcomments()
-
+    for c in commentobj:
+        comments.append({
+            'comment': c.comment,
+            'user_id': c.user_id,
+            'create_at': c.create_at
+        })
 
     return "success", 200
 
