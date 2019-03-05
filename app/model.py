@@ -186,7 +186,7 @@ class Comments(db.Model):
 
     @staticmethod
     def getallcomments():
-        return Comments.query.filter_by(id=1).first()
+        return Comments.query.all()
 
 
 class Likes(db.Model):

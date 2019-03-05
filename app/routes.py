@@ -317,7 +317,7 @@ def getcomment(post_id):
 @routes.route('/getcommentee', methods=['POST'])
 def get_commenteee():
     comments = []
-    #commentobj = Comments.getallcomments()
+    commentobj = Comments.getallcomments()
 
 
     return "success", 200
