@@ -313,6 +313,9 @@ def getcomment(post_id):
         })
     return jsonify(comments), 200
 
+@routes.route('/getcommentee/<post_id>', methods=['POST'])
+def get_commenteee(post_id):
+    return jsonify(Comments.getcomments(post_id)), 200
 
 @routes.route('/getlikers/<post_id>', methods=['POST'])
 def get_likers(post_id):
