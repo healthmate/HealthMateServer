@@ -184,6 +184,10 @@ class Comments(db.Model):
     def getcomments(post_id):
         return Comments.query.filter_by(post_id=post_id).all()
 
+    @staticmethod
+    def getallcomments():
+        return Comments.query.filter_by(id=1).first()
+
 
 class Likes(db.Model):
     __tablename__ = 'likes'
