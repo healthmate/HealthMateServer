@@ -325,7 +325,7 @@ def get_commenteee():
             'create_at': c.create_at
         })
 
-    return "success", 200
+    return jsonify(comments), 200
 
 
 @routes.route('/getlikers/<post_id>', methods=['POST'])
