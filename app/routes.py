@@ -304,7 +304,7 @@ def comment(current_user):
 @token_required
 def getcomment(post_id):
     comments = []
-    comment = Comments.getcomments(post_id)
+    comment = Comments.getcomments(post_id=post_id)
 
     for c in comment:
         comments.append({
