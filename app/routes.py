@@ -109,6 +109,27 @@ def getuserprofile(current_user):
     return jsonify(data), 200
 
 
+@routes.route('/getuserprofile/<userid>', methods=['POST'])
+@token_required
+def getuserprofile(current_user, userid):
+    isFollowing = False
+    count = Community.get_community_count(userid)
+    post_count = Post.get_post_count(userid)
+    community = Community.get_community(current_user.id)
+    for person in community:
+        if person.community_id == userid:
+            isFollowing = True
+    data = {
+        'user_id': userid,
+        'username': User.getusername(userid),
+        'community': count,
+        'posts': post_count,
+        'isFollowing': isFollowing
+    }
+
+    return jsonify(data), 200
+
+
 @routes.route('/search', methods=['POST'])
 @token_required
 def search(current_user):
@@ -164,6 +185,40 @@ def getuserpost(current_user):
     """
     posts = []
     post = Post.get_posts(current_user.id)
+    comments = []
+
+    for item in post:
+
+        comments.clear()
+        comment = Comments.getcomments(item.id)
+
+        for c in comment:
+            comments.append({
+                'comment': c.comment,
+                'username': User.getusername(c.user_id),
+                'create_at': c.create_at
+            })
+
+        posts.append({
+            'post_id': item.id,
+            'description': item.description,
+            'image_url': item.image_url,
+            'create_at': item.create_at,
+            'user_id': item.user_id,
+            'username': User.getusername(item.user_id),
+            'likes': item.likes,
+            'comments': comments
+        })
+    return jsonify(posts), 200
+
+@routes.route('/getuserposts/<user_id>', methods=['GET'])
+def getuserpost(user_id):
+    """
+    get posts
+    :return:
+    """
+    posts = []
+    post = Post.get_posts(user_id)
     comments = []
 
     for item in post:
