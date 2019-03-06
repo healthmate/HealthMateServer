@@ -111,7 +111,7 @@ def getuserprofile(current_user):
 
 @routes.route('/getuserprofile/<userid>', methods=['POST'])
 @token_required
-def getuserprofile(current_user, userid):
+def getuserprofileid(current_user, userid):
     isFollowing = False
     count = Community.get_community_count(userid)
     post_count = Post.get_post_count(userid)
@@ -178,7 +178,7 @@ def post(current_user):
 
 @routes.route('/getuserposts', methods=['GET'])
 @token_required
-def getuserpost(current_user):
+def getuserpostid(current_user):
     """
     get posts
     :return:
