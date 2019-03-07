@@ -113,22 +113,21 @@ def getuserprofile(current_user):
 @token_required
 def getuserprofileid(current_user, userid):
     isFollowing = False
-    count = Community.get_community_count(userid)
-    post_count = Post.get_post_count(userid)
     passe = "notpass"
     test1 = "tst1"
     test2 = "tst2"
+    community = Community.get_community(current_user.id)
+    for person in community:
+        test1 = current_user.username
+        test2 = userid
+        if person.community_id == userid:
+            passe = "pass"
+            isFollowing = True
+    count = Community.get_community_count(userid)
+    post_count = Post.get_post_count(userid)
 
-    if True:
 
-        community = Community.get_community(current_user.id)
-        for person in community:
-            test1 = current_user.username
-            test2 = userid
-            if person.community_id == userid:
-                passe = "pass"
-                isFollowing = True
-        data = {
+    data = {
             'user_id': userid,
             'username': User.getusername(userid),
             'community': count,
