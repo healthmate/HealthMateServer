@@ -115,18 +115,20 @@ def getuserprofileid(current_user, userid):
     isFollowing = False
     count = Community.get_community_count(userid)
     post_count = Post.get_post_count(userid)
-
+    passe = "notpass"
     if True:
 
         community = Community.get_community(current_user.id)
         for person in community:
             if person.community_id == userid:
+                passe = "pass"
                 isFollowing = True
         data = {
             'user_id': userid,
             'username': User.getusername(userid),
             'community': count,
             'posts': post_count,
+            'pass': passe,
             'isFollowing': isFollowing
         }
 
