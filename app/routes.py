@@ -116,10 +116,15 @@ def getuserprofileid(current_user, userid):
     count = Community.get_community_count(userid)
     post_count = Post.get_post_count(userid)
     passe = "notpass"
+    test1 = "tst1"
+    test2 = "tst2"
+
     if True:
 
         community = Community.get_community(current_user.id)
         for person in community:
+            test1 = person.community_id
+            test2 = userid
             if person.community_id == userid:
                 passe = "pass"
                 isFollowing = True
@@ -129,7 +134,9 @@ def getuserprofileid(current_user, userid):
             'community': count,
             'posts': post_count,
             'pass': passe,
-            'isFollowing': isFollowing
+            'isFollowing': isFollowing,
+            'test1': test1,
+            'test2': test2
         }
 
     return jsonify(data), 200
