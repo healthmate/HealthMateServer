@@ -123,7 +123,7 @@ def getuserprofileid(current_user, userid):
 
         community = Community.get_community(current_user.id)
         for person in community:
-            test1 = current_user.id
+            test1 = current_user.username
             test2 = userid
             if person.community_id == userid:
                 passe = "pass"
