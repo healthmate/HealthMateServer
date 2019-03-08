@@ -41,12 +41,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="4740" />
+          <entry key="py" value="4755" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="4740" />
+          <entry key="Python" value="4755" />
         </counts>
       </usages-collector>
     </session>
@@ -81,12 +81,12 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/routes.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="130" lean-forward="true" selection-start-line="130" selection-end-line="130" />
+            <state relative-caret-position="354">
+              <caret line="48" column="83" lean-forward="true" selection-start-line="48" selection-start-column="61" selection-end-line="48" selection-end-column="83" />
               <folding>
                 <element signature="e#0#52#0" expanded="true" />
-                <marker date="1552000279970" expanded="true" signature="3839:4786" ph="..." />
-                <marker date="1552000279970" expanded="true" signature="11763:11766" ph="..." />
+                <marker date="1552043365494" expanded="true" signature="3855:4802" ph="..." />
+                <marker date="1552043365494" expanded="true" signature="11779:11782" ph="..." />
               </folding>
             </state>
           </provider>
@@ -230,6 +230,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24947146" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -354,12 +355,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/routes.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="130" lean-forward="true" selection-start-line="130" selection-end-line="130" />
+        <state relative-caret-position="354">
+          <caret line="48" column="83" lean-forward="true" selection-start-line="48" selection-start-column="61" selection-end-line="48" selection-end-column="83" />
           <folding>
             <element signature="e#0#52#0" expanded="true" />
-            <marker date="1552000279970" expanded="true" signature="3839:4786" ph="..." />
-            <marker date="1552000279970" expanded="true" signature="11763:11766" ph="..." />
+            <marker date="1552043365494" expanded="true" signature="3855:4802" ph="..." />
+            <marker date="1552043365494" expanded="true" signature="11779:11782" ph="..." />
           </folding>
         </state>
       </provider>

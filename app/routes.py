@@ -46,7 +46,7 @@ def login():
     if re.match(r"[^@]+@[^@]+\.[^@]+", email) and len(password) > 4:
         user = User.query.filter_by(email=email).first()
         if user and bcrypt.check_password_hash(user.password, password):
-            return response_auth('success', 'Successfully logged In', user.encode_auth_token(user.id), 200)
+            return response_auth(User.getusername(user.id), 'Successfully logged In', user.encode_auth_token(user.id), 200)
         return response('failed', 'User does not exist or password is incorrect', 401)
     return response('failed', 'Missing or wrong email format or password is less than four characters', 401)
 
