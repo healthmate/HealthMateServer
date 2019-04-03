@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, Blueprint
-from app.model import User, Post, Community, BlackListToken, Comments, Likes
+from app.model import User, Post, Community, Comments, Likes, Steps
 import re
+import datetime
 from app.helper import response, response_auth, token_required
 from app import bcrypt
 
@@ -46,31 +47,10 @@ def login():
     if re.match(r"[^@]+@[^@]+\.[^@]+", email) and len(password) > 4:
         user = User.query.filter_by(email=email).first()
         if user and bcrypt.check_password_hash(user.password, password):
-            return response_auth(User.getusername(user.id), 'Successfully logged In', user.encode_auth_token(user.id), 200)
+            return response_auth(User.getusername(user.id), 'Successfully logged In', user.encode_auth_token(user.id),
+                                 200)
         return response('failed', 'User does not exist or password is incorrect', 401)
     return response('failed', 'Missing or wrong email format or password is less than four characters', 401)
-
-
-@routes.route("/auth/logout", methods=["POST"])
-def logout():
-    """
-        Try to logout a user using a token
-        :return:
-     """
-    auth_header = request.headers.get('Authorization')
-    if auth_header:
-        try:
-            auth_token = auth_header.split(" ")[1]
-        except IndexError:
-            return response('failed', 'Provide a valid auth token', 403)
-        else:
-            decoded_token_response = User.decode_auth_token(auth_token)
-            if not isinstance(decoded_token_response, str):
-                token = BlackListToken(auth_token)
-                token.blacklist()
-                return response('success', 'Successfully logged out', 200)
-            return response('failed', decoded_token_response, 401)
-    return response('failed', 'Provide an authorization header', 403)
 
 
 @routes.route('/getuser', methods=['POST'])
@@ -120,14 +100,13 @@ def getuserprofileid(current_user, userid):
     count = Community.get_community_count(userid)
     post_count = Post.get_post_count(userid)
 
-
     data = {
-            'user_id': userid,
-            'username': User.getusername(userid),
-            'community': count,
-            'posts': post_count,
-            'isFollowing': isFollowing
-        }
+        'user_id': userid,
+        'username': User.getusername(userid),
+        'community': count,
+        'posts': post_count,
+        'isFollowing': isFollowing
+    }
 
     return jsonify(data), 200
 
@@ -212,6 +191,7 @@ def getuserpostid(current_user):
             'comments': comments
         })
     return jsonify(posts), 200
+
 
 @routes.route('/getuserposts/<user_id>', methods=['GET'])
 def getuserpost(user_id):
@@ -339,7 +319,6 @@ def get_community(current_user):
 @routes.route('/like/<post_id>', methods=['POST'])
 @token_required
 def like(current_user, post_id):
-
     like = Likes(user_id=current_user.id, post_id=post_id)
     like.save()
     return response('success', 'Successfully liked post', 200)
@@ -387,7 +366,6 @@ def get_commenteee():
 
 @routes.route('/getlikers/<post_id>', methods=['POST'])
 def get_likers(post_id):
-
     response = []
     likers = Likes.getlikers(post_id=post_id)
     for user in likers:
@@ -400,9 +378,66 @@ def get_likers(post_id):
 @routes.route('/checkliker/<post_id>', methods=['POST'])
 @token_required
 def check_liker(current_user, post_id):
-
     likers = Likes.getlikers(post_id=post_id)
     for user in likers:
         if user.user_id == current_user.id:
             return "LIKED", 200
     return "NOT LIKED", 401
+
+
+@routes.route('/storesteps/<steps>', methods=['POST'])
+@token_required
+def store_steps(current_user, steps):
+    step = Steps(user_id=current_user.id, steps_no=steps)
+    if not Steps.update_if_instance_exist(datetime.datetime.now().date(),current_user.id, steps):
+        step.save()
+    return response('success', 'Steps added successfully', 200)
+
+
+@routes.route('/getsteps/<limit>', methods=['GET'])
+@token_required
+def get_steps(current_user, limit):
+    steps = Steps.get_steps(current_user.id, limit)
+    resp = []
+    for data in steps:
+        resp.append({
+            'date': data.date,
+            'steps': data.steps_no
+        })
+    return jsonify(resp), 200
+
+
+"""@routes.route('/notification/save', methods=['POST'])
+@token_required
+def save_notification(current_user):
+    values = request.get_json()
+    required = ['user_id', 'message']
+    if not all(k in values for k in required):
+        return 'Missing values', 400
+    user_id = current_user.id
+    is_deleted = values.get("is_deleted")
+    message = values.get("message")
+    is_challenge = "False"
+    is_post_related = "False"
+    is_community_request = "False"
+    community_invitee = "False"
+    challenge_id = None
+    post_id = None
+
+    if values.get("is_challenge"):
+        is_challenge = values.get("is_challenge")
+    if values.get("is_post_related"):
+        is_post_related = values.get("is_post_related")
+    if values.get("is_community_request"):
+        is_community_request = values.get("is_community_request")
+    if values.get("community_invitee"):
+        community_invitee = values.get("community_invitee")
+    if values.get("challenge_id"):
+        challenge_id = values.get("challenge_id")
+    if values.get("post_id"):
+        post_id = values.get("post_id")
+
+    notification = Notification(user_id=user_id, is_deleted=is_deleted, message=message, is_challenge=is_challenge,
+                                is_post_related=is_post_related, is_community_request=is_community_request,
+                                community_invitee=community_invitee, challenge_id=challenge_id, post_id=post_id)
+    notification.save()"""

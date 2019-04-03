@@ -1,4 +1,5 @@
 from app import app, db, bcrypt
+from sqlalchemy import and_
 import datetime
 import jwt
 
@@ -16,6 +17,7 @@ class User(db.Model):
     registered_on = db.Column(db.DateTime, nullable=False)
     post = db.relationship('Post', backref='post', lazy='dynamic')
     community = db.relationship('Community', backref='community', lazy='dynamic')
+    steps = db.relationship('Steps', backref='step', lazy='dynamic')
 
     def __init__(self, email, password, first_name, last_name, username):
         self.email = email
@@ -64,9 +66,6 @@ class User(db.Model):
         """
         try:
             payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms='HS256')
-            is_token_blacklisted = BlackListToken.check_blacklist(token)
-            if is_token_blacklisted:
-                return 'Token was Blacklisted, Please login In'
             return payload['sub']
         except jwt.ExpiredSignatureError:
             return 'Signature expired, Please sign in again'
@@ -111,7 +110,6 @@ class User(db.Model):
         user = User.query.filter_by(id=user_id).first()
 
         return user.username
-
 
 
 class Post(db.Model):
@@ -247,36 +245,87 @@ class Community(db.Model):
         return community_count
 
 
-class BlackListToken(db.Model):
+class Steps(db.Model):
     """
-    Table to store blacklisted/invalid auth tokens
+    Table to store user's steps
     """
-    __tablename__ = 'blacklist_token'
+    __tablename__ = 'steps'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    token = db.Column(db.String(255), unique=True, nullable=False)
-    blacklisted_on = db.Column(db.DateTime, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    steps_no = db.Column(db.Integer, nullable=False)
+    date = db.Column(db.DateTime, nullable=False)
 
-    def __init__(self, token):
-        self.token = token
-        self.blacklisted_on = datetime.datetime.now()
+    def __init__(self, user_id, steps_no):
+        self.user_id = user_id
+        self.steps_no = steps_no
+        self.date = datetime.datetime.now().date()
 
-    def blacklist(self):
+    def save(self):
         """
-        Persist Blacklisted token in the database
+        Persist the steps in the database
+        :param steps:
         :return:
         """
         db.session.add(self)
         db.session.commit()
 
     @staticmethod
-    def check_blacklist(token):
-        """
-        Check to find out whether a token has already been blacklisted.
-        :param token: Authorization token
-        :return:
-        """
-        response = BlackListToken.query.filter_by(token=token).first()
-        if response:
+    def update_if_instance_exist(current_date, user_id, steps):
+        instance = Steps.query.filter(
+            and_(Steps.user_id == user_id, Steps.date == current_date)).first()
+        if instance:
+            instance.steps_no = steps
+            db.session.commit()
             return True
         return False
+
+    @staticmethod
+    def get_steps(user_id, limit):
+        return Steps.query.filter_by(user_id=user_id).limit(limit)
+
+
+"""class Notification(db.Model):
+    __tablename__ = 'notifications'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    is_deleted = db.Column(db.String, nullable=False)
+    message = db.Column(db.String, nullable=False)
+    create_at = db.Column(db.DateTime, nullable=False)
+    community_invitee = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    challenge_id = db.Column(db.Integer, db.ForeignKey('challenge.id'), nullable=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=True)
+    is_challenge = db.Column(db.String, nullable=False)
+    is_post_related = db.Column(db.String, nullable=False)
+    is_community_request = db.Column(db.String, nullable=False)
+
+    def __init__(self, user_id, is_deleted="False", message=None, community_invitee=None, challenge_id=None,
+                 post_id=None, is_challenge="False", is_post_related="False", is_community_request="False"):
+        self.user_id = user_id
+        self.is_deleted = is_deleted
+        self.create_at = datetime.datetime.now()
+        self.message = message
+        self.is_challenge = is_challenge
+        self.is_post_related = is_post_related
+        self.is_community_request = is_community_request
+        if community_invitee:
+            self.community_invitee = community_invitee
+        if challenge_id:
+            self.challenge_id = challenge_id
+        if post_id:
+            self.post_id = post_id
+
+    def save(self):
+        
+        Persist the steps in the database
+        :param notifications:
+        :return:
+        
+        db.session.add(self)
+        db.session.commit()
+
+    @staticmethod
+    def get_notifications(user_id):
+        return Notification.query.filter(
+            and_(Notification.user_id == user_id, Notification.is_deleted == "False")).all()"""
