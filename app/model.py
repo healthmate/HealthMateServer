@@ -285,6 +285,51 @@ class Steps(db.Model):
         return Steps.query.filter_by(user_id=user_id).limit(limit)
 
 
+class Challenge(db.Model):
+    """
+    Table to store challenges
+    """
+    __tablename__ = 'challenges'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    role = db.Column(db.String(10), nullable=False)
+    goal = db.Column(db.Integer, nullable=False)
+    steps = db.Column(db.Integer, nullable=False)
+    challenge_name = db.Column(db.String(255), nullable=False)
+    challenge_description = db.Column(db.String(255), nullable=False)
+    start_date = db.Column(db.DateTime, nullable=False)
+    end_date = db.Column(db.DateTime, nullable=False)
+
+    def __init__(self, user_id, goal, challenge_name, challenge_description, end_date: dict):
+        self.user_id = user_id
+        self.steps = 0
+        self.start_date = datetime.datetime.now().date()
+        self.goal = goal
+        self.role = "creator"
+        self.challenge_name = challenge_name
+        self.challenge_description = challenge_description
+        self.end_date = datetime.date(int(end_date['year']), int(end_date['month']), int(end_date['day']))
+
+    def save(self):
+        """
+        Persist the steps in the database
+        :param steps:
+        :return:
+        """
+        db.session.add(self)
+        db.session.commit()
+
+    @staticmethod
+    def join_challenge(fields: dict):
+        # method for joining challenge
+        print("nothing")
+
+    @staticmethod
+    def get_users_performance(challenge_id):
+        return Steps.query.filter_by(id=challenge_id).order_by(Challenge.steps.desc()).all()
+
+
 """class Notification(db.Model):
     __tablename__ = 'notifications'
 

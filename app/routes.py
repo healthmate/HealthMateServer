@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, Blueprint
-from app.model import User, Post, Community, Comments, Likes, Steps
+from app.model import User, Post, Community, Comments, Likes, Steps, Challenge
 import re
 import datetime
 from app.helper import response, response_auth, token_required
@@ -149,6 +149,27 @@ def post(current_user):
     if not all(k in values for k in required):
         return 'Missing values', 400
     description = values.get('description')
+    data = {}
+    for word in description.split():
+        if word.startswith("#"):
+            if "challenge" in word:
+                data['challenge'] = word[1:]
+            if "d" in word:
+                data['date'] = word[2:]
+            if "g" in word:
+                data['goal'] = word[2:]
+
+    required = ['challenge', 'date', 'goal']
+    if all(k in data for k in required):
+        end_date = {}
+        date = data["date"].split('-')
+        end_date['year'] = date[0]
+        end_date['month'] = date[1]
+        end_date['day'] = date[2]
+        challenge = Challenge(user_id=current_user.id, goal=data["goal"], challenge_name=data["challenge"],
+                              challenge_description=description, end_date=end_date)
+        challenge.save()
+
     image_url = values.get('image_url')
     userid = current_user.id
 
@@ -389,7 +410,7 @@ def check_liker(current_user, post_id):
 @token_required
 def store_steps(current_user, steps):
     step = Steps(user_id=current_user.id, steps_no=steps)
-    if not Steps.update_if_instance_exist(datetime.datetime.now().date(),current_user.id, steps):
+    if not Steps.update_if_instance_exist(datetime.datetime.now().date(), current_user.id, steps):
         step.save()
     return response('success', 'Steps added successfully', 200)
 
