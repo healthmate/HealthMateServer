@@ -18,7 +18,7 @@ class User(db.Model):
     post = db.relationship('Post', backref='post', lazy='dynamic')
     community = db.relationship('Community', backref='community', lazy='dynamic')
     steps = db.relationship('Steps', backref='step', lazy='dynamic')
-    challenge = db.relationship('Challenge', backref='challenge', lazy='dynamic')
+    challenge = db.relationship('Challenge', backref='challenges', lazy='dynamic')
 
     def __init__(self, email, password, first_name, last_name, username):
         self.email = email
@@ -124,7 +124,7 @@ class Post(db.Model):
     create_at = db.Column(db.DateTime, nullable=False)
     likes = db.Column(db.Integer, nullable=True)
     comments = db.relationship('Comments', backref='comments', lazy='dynamic')
-    challenge = db.relationship('Challenge', backref='challenge', lazy='dynamic')
+    challenge = db.relationship('Challenge', backref='challenges', lazy='dynamic')
 
     def __init__(self, description, image_url, user_id):
         self.image_url = image_url
