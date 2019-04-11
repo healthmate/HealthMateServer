@@ -330,13 +330,13 @@ class Challenge(db.Model):
         # method for joining challenge
         user_id = fields['user_id']
         post_id = fields['post_id']
-        date1 = fields['start_date'].split('-')
+        date1 = str(fields['start_date']).split('-')
         start_date = datetime.date(int(date1[0]), int(date1[1]), int(date1[2]))
         goal = fields['goal']
         challenge_name = fields['challenge_name']
         challenge_description = fields['challenge_description']
         end_date = {}
-        date2 = fields['current_date'].split('-')
+        date2 = str(fields['current_date']).split('-')
         end_date['year'] = date2[0]
         end_date['month'] = date2[1]
         end_date['day'] = date2[2]
