@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3d7bd3cf-2e06-4e8f-83db-63ffa15b143e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/app/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes.py" afterDir="false" />
-    </list>
+    <list default="true" id="3d7bd3cf-2e06-4e8f-83db-63ffa15b143e" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,8 +88,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/routes.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="132">
-              <caret line="465" column="10" selection-start-line="465" selection-start-column="10" selection-end-line="465" selection-end-column="10" />
+            <state relative-caret-position="1245">
+              <caret line="83" column="42" lean-forward="true" selection-start-line="83" selection-start-column="42" selection-end-line="83" selection-end-column="42" />
               <folding>
                 <element signature="e#0#52#0" expanded="true" />
                 <marker date="1555015510931" expanded="true" signature="3083:4005" ph="..." />
@@ -239,7 +237,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24947146" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -405,8 +402,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/routes.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="465" column="10" selection-start-line="465" selection-start-column="10" selection-end-line="465" selection-end-column="10" />
+        <state relative-caret-position="1245">
+          <caret line="83" column="42" lean-forward="true" selection-start-line="83" selection-start-column="42" selection-end-line="83" selection-end-column="42" />
           <folding>
             <element signature="e#0#52#0" expanded="true" />
             <marker date="1555015510931" expanded="true" signature="3083:4005" ph="..." />
