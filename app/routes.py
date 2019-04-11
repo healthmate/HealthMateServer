@@ -463,7 +463,7 @@ def get_all_challenges(current_user):
         })
     return jsonify(resp), 200
 
-
+#challenge
 @routes.route('/challenge/<challenge_id>', methods=['GET'])
 @token_required
 def get_challenge(current_user, challenge_id):
