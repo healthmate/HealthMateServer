@@ -18,7 +18,6 @@ class User(db.Model):
     post = db.relationship('Post', backref='post', lazy='dynamic')
     community = db.relationship('Community', backref='community', lazy='dynamic')
     steps = db.relationship('Steps', backref='step', lazy='dynamic')
-    challenge = db.relationship('Challenge', backref='challenges', lazy='dynamic')
 
     def __init__(self, email, password, first_name, last_name, username):
         self.email = email
