@@ -18,6 +18,7 @@ class User(db.Model):
     post = db.relationship('Post', backref='post', lazy='dynamic')
     community = db.relationship('Community', backref='community', lazy='dynamic')
     steps = db.relationship('Steps', backref='step', lazy='dynamic')
+    challenge = db.relationship('Challenge', backref='challenge', lazy='dynamic')
 
     def __init__(self, email, password, first_name, last_name, username):
         self.email = email
@@ -123,6 +124,7 @@ class Post(db.Model):
     create_at = db.Column(db.DateTime, nullable=False)
     likes = db.Column(db.Integer, nullable=True)
     comments = db.relationship('Comments', backref='comments', lazy='dynamic')
+    challenge = db.relationship('Challenge', backref='challenge', lazy='dynamic')
 
     def __init__(self, description, image_url, user_id):
         self.image_url = image_url
@@ -138,6 +140,8 @@ class Post(db.Model):
         """
         db.session.add(self)
         db.session.commit()
+        db.session.refresh(self)
+        return self.id
 
     @staticmethod
     def like(post_id):
@@ -300,21 +304,23 @@ class Challenge(db.Model):
     challenge_description = db.Column(db.String(255), nullable=False)
     start_date = db.Column(db.DateTime, nullable=False)
     end_date = db.Column(db.DateTime, nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
 
-    def __init__(self, user_id, goal, challenge_name, challenge_description, end_date: dict):
+    def __init__(self, user_id, post_id, goal, challenge_name, challenge_description, end_date: dict,
+                 steps=0, role="creator", start_date=datetime.datetime.now().date()):
         self.user_id = user_id
-        self.steps = 0
-        self.start_date = datetime.datetime.now().date()
+        self.steps = steps
+        self.start_date = start_date
         self.goal = goal
-        self.role = "creator"
+        self.role = role
         self.challenge_name = challenge_name
         self.challenge_description = challenge_description
         self.end_date = datetime.date(int(end_date['year']), int(end_date['month']), int(end_date['day']))
+        self.post_id = post_id
 
     def save(self):
         """
         Persist the steps in the database
-        :param steps:
         :return:
         """
         db.session.add(self)
@@ -323,11 +329,48 @@ class Challenge(db.Model):
     @staticmethod
     def join_challenge(fields: dict):
         # method for joining challenge
-        print("nothing")
+        user_id = fields['user_id']
+        post_id = fields['post_id']
+        date1 = fields['start_date'].split('-')
+        start_date = datetime.date(int(date1[0]), int(date1[1]), int(date1[2]))
+        goal = fields['goal']
+        challenge_name = fields['challenge_name']
+        challenge_description = fields['challenge_description']
+        end_date = {}
+        date2 = fields['current_date'].split('-')
+        end_date['year'] = date2[0]
+        end_date['month'] = date2[1]
+        end_date['day'] = date2[2]
+        e_date = datetime.date(int(date2[0]), int(date2[1]), int(date2[2]))
+        record = Steps.query.filter(and_(Steps.date <= e_date, Steps.date >= start_date, user_id=user_id))
+        steps = 0
+        for item in record:
+            steps += item.steps_no
+        Challenge(user_id=user_id, post_id=post_id, goal=goal, challenge_name=challenge_name,
+                  challenge_description=challenge_description,
+                  end_date=end_date, steps=steps, role="member", start_date=start_date).save()
 
     @staticmethod
     def get_users_performance(challenge_id):
-        return Steps.query.filter_by(id=challenge_id).order_by(Challenge.steps.desc()).all()
+        return Challenge.query.filter_by(id=challenge_id).order_by(Challenge.steps.desc()).all()
+
+    @staticmethod
+    def get_challenge_by_user_id(user_id):
+        return Challenge.query.filter_by(user_id=user_id).all()
+
+    @staticmethod
+    def get_creator(challenge_id):
+        return Challenge.query.filter(
+            and_(Challenge.challenge_id == challenge_id, Challenge.role == "creator")).first()
+
+    @staticmethod
+    def check_postid(post_id):
+        return Challenge.query.filter_by(post_id=post_id).first()
+
+    @staticmethod
+    def check_join(message, username):
+        check_username = message[1:]
+        return True if '@' in message and check_username == username else False
 
 
 """class Notification(db.Model):
