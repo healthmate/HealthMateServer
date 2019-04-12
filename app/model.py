@@ -2,13 +2,14 @@ from app import app, db, bcrypt
 from sqlalchemy import and_
 import datetime
 import jwt
+import uuid
 
 
 class User(db.Model):
     """table schema"""
     __tablename__ = "users"
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.String, primary_key=True)
     first_name = db.Column(db.String(255), nullable=False)
     last_name = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
@@ -27,6 +28,7 @@ class User(db.Model):
         self.last_name = last_name
         self.username = username
         self.registered_on = datetime.datetime.now()
+        self.id = uuid.uuid4().__str__()
 
     def save(self):
         """
@@ -115,7 +117,7 @@ class User(db.Model):
 class Post(db.Model):
     __tablename__ = 'posts'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.String, primary_key=True)
     # firebase storage
     image_url = db.Column(db.String(255), nullable=False)
     description = db.Column(db.String(255), nullable=False)
@@ -131,6 +133,7 @@ class Post(db.Model):
         self.user_id = user_id
         self.create_at = datetime.datetime.now()
         self.likes = 0
+        self.id = uuid.uuid4().__str__()
 
     def save(self):
         """
@@ -165,7 +168,7 @@ class Post(db.Model):
 class Comments(db.Model):
     __tablename__ = 'comments'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.String, primary_key=True)
     comment = db.Column(db.String(255), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
@@ -176,6 +179,7 @@ class Comments(db.Model):
         self.comment = comment
         self.post_id = post_id
         self.create_at = datetime.datetime.now()
+        self.id = uuid.uuid4().__str__()
 
     def save(self):
         db.session.add(self)
@@ -193,7 +197,7 @@ class Comments(db.Model):
 class Likes(db.Model):
     __tablename__ = 'likes'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.String, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
     create_at = db.Column(db.DateTime, nullable=False)
@@ -202,6 +206,7 @@ class Likes(db.Model):
         self.user_id = user_id
         self.post_id = post_id
         self.create_at = datetime.datetime.now()
+        self.id = uuid.uuid4().__str__()
 
     def save(self):
         Post.like(post_id=self.post_id)
@@ -254,7 +259,7 @@ class Steps(db.Model):
     """
     __tablename__ = 'steps'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.String, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     steps_no = db.Column(db.Integer, nullable=False)
     date = db.Column(db.DateTime, nullable=False)
@@ -263,6 +268,7 @@ class Steps(db.Model):
         self.user_id = user_id
         self.steps_no = steps_no
         self.date = datetime.datetime.now().date()
+        self.id = uuid.uuid4().__str__()
 
     def save(self):
         """
@@ -294,7 +300,7 @@ class Challenge(db.Model):
     """
     __tablename__ = 'challenges'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.String, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     role = db.Column(db.String(10), nullable=False)
     goal = db.Column(db.Integer, nullable=False)
@@ -316,6 +322,7 @@ class Challenge(db.Model):
         self.challenge_description = challenge_description
         self.end_date = datetime.date(int(end_date['year']), int(end_date['month']), int(end_date['day']))
         self.post_id = post_id
+        self.id = uuid.uuid4().__str__()
 
     def save(self):
         """
@@ -331,7 +338,7 @@ class Challenge(db.Model):
         user_id = fields['user_id']
         post_id = fields['post_id']
         start_date = fields['start_date']
-        #start_date = datetime.date(int(date1[0]), int(date1[1]), int(date1[2]))
+        # start_date = datetime.date(int(date1[0]), int(date1[1]), int(date1[2]))
         goal = fields['goal']
         challenge_name = fields['challenge_name']
         challenge_description = fields['challenge_description']
@@ -342,7 +349,7 @@ class Challenge(db.Model):
         end_date['year'] = date2[0]
         end_date['month'] = date2[1]
         end_date['day'] = date2[2]
-        #e_date = datetime.date(int(current_date[0]), int(current_date[1]), int(current_date[2]))
+        # e_date = datetime.date(int(current_date[0]), int(current_date[1]), int(current_date[2]))
         record = Steps.query.filter(and_(Steps.date <= current_date, Steps.date >= start_date,
                                          Steps.user_id == user_id))
         steps = 0
