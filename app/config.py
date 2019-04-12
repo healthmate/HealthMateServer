@@ -2,7 +2,7 @@ import os
 
 base_dir = os.path.abspath(os.path.dirname(__file__))
 postgres_local_base = 'postgresql://coderiddles:12345@localhost/'
-database_name = 'healthmate'
+database_name = 'newhealthmate'
 
 
 class BaseConfig:
