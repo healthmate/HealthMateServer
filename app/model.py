@@ -330,18 +330,20 @@ class Challenge(db.Model):
         # method for joining challenge
         user_id = fields['user_id']
         post_id = fields['post_id']
-        date1 = str(fields['start_date']).split('-')
-        start_date = datetime.date(int(date1[0]), int(date1[1]), int(date1[2]))
+        start_date = fields['start_date']
+        #start_date = datetime.date(int(date1[0]), int(date1[1]), int(date1[2]))
         goal = fields['goal']
         challenge_name = fields['challenge_name']
         challenge_description = fields['challenge_description']
         end_date = {}
-        date2 = str(fields['current_date']).split('-')
+        current_date = fields['current_date']
+        truncate_space = str(fields['end_date']).split(' ')
+        date2 = truncate_space[0].split('-')
         end_date['year'] = date2[0]
         end_date['month'] = date2[1]
         end_date['day'] = date2[2]
-        e_date = datetime.date(int(date2[0]), int(date2[1]), int(date2[2]))
-        record = Steps.query.filter(and_(Steps.date <= e_date, Steps.date >= start_date, user_id=user_id))
+        #e_date = datetime.date(int(current_date[0]), int(current_date[1]), int(current_date[2]))
+        record = Steps.query.filter(and_(Steps.date <= current_date, Steps.date >= start_date, user_id=user_id))
         steps = 0
         for item in record:
             steps += item.steps_no

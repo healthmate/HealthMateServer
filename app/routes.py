@@ -365,7 +365,8 @@ def comment(current_user):
                   'start_date': challenge.start_date,
                   'challenge_name': challenge.challenge_name,
                   'challenge_description': challenge.challenge_description,
-                  'current_date': str(datetime.datetime.now().date())
+                  'current_date': datetime.datetime.now().date(),
+                  'end_date': challenge.end_date
                   }
         Challenge.join_challenge(fields)
 
