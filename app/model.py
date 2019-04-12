@@ -343,7 +343,8 @@ class Challenge(db.Model):
         end_date['month'] = date2[1]
         end_date['day'] = date2[2]
         #e_date = datetime.date(int(current_date[0]), int(current_date[1]), int(current_date[2]))
-        record = Steps.query.filter(and_(Steps.date <= current_date, Steps.date >= start_date, user_id=user_id))
+        record = Steps.query.filter(and_(Steps.date <= current_date, Steps.date >= start_date,
+                                         Steps.user_id == user_id))
         steps = 0
         for item in record:
             steps += item.steps_no
