@@ -121,7 +121,7 @@ class Post(db.Model):
     # firebase storage
     image_url = db.Column(db.String(255), nullable=False)
     description = db.Column(db.String(255), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.String, db.ForeignKey('users.id'))
     create_at = db.Column(db.DateTime, nullable=False)
     likes = db.Column(db.Integer, nullable=True)
     comments = db.relationship('Comments', backref='comments', lazy='dynamic')
@@ -170,8 +170,8 @@ class Comments(db.Model):
 
     id = db.Column(db.String, primary_key=True)
     comment = db.Column(db.String(255), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+    user_id = db.Column(db.String, db.ForeignKey('users.id'))
+    post_id = db.Column(db.String, db.ForeignKey('posts.id'))
     create_at = db.Column(db.DateTime, nullable=False)
 
     def __init__(self, comment, post_id, user_id):
@@ -198,8 +198,8 @@ class Likes(db.Model):
     __tablename__ = 'likes'
 
     id = db.Column(db.String, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+    user_id = db.Column(db.String, db.ForeignKey('users.id'))
+    post_id = db.Column(db.String, db.ForeignKey('posts.id'))
     create_at = db.Column(db.DateTime, nullable=False)
 
     def __init__(self, user_id, post_id):
@@ -229,8 +229,8 @@ class Likes(db.Model):
 class Community(db.Model):
     __tablename__ = 'community'
 
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
-    community_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String, db.ForeignKey('users.id'), primary_key=True)
+    community_id = db.Column(db.String, primary_key=True)
 
     def __init__(self, user_id, community_id):
         self.user_id = user_id
@@ -260,7 +260,7 @@ class Steps(db.Model):
     __tablename__ = 'steps'
 
     id = db.Column(db.String, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.String, db.ForeignKey('users.id'))
     steps_no = db.Column(db.Integer, nullable=False)
     date = db.Column(db.DateTime, nullable=False)
 
@@ -301,7 +301,7 @@ class Challenge(db.Model):
     __tablename__ = 'challenges'
 
     id = db.Column(db.String, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.String, db.ForeignKey('users.id'))
     role = db.Column(db.String(10), nullable=False)
     goal = db.Column(db.Integer, nullable=False)
     steps = db.Column(db.Integer, nullable=False)
@@ -309,7 +309,7 @@ class Challenge(db.Model):
     challenge_description = db.Column(db.String(255), nullable=False)
     start_date = db.Column(db.DateTime, nullable=False)
     end_date = db.Column(db.DateTime, nullable=False)
-    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+    post_id = db.Column(db.String, db.ForeignKey('posts.id'))
 
     def __init__(self, user_id, post_id, goal, challenge_name, challenge_description, end_date: dict,
                  steps=0, role="creator", start_date=datetime.datetime.now().date()):

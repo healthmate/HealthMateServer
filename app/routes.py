@@ -95,7 +95,7 @@ def getuserprofileid(current_user, userid):
     isFollowing = False
     community = Community.get_community(current_user.id)
     for person in community:
-        if person.community_id == int(userid):
+        if person.community_id == userid:
             isFollowing = True
     count = Community.get_community_count(userid)
     post_count = Post.get_post_count(userid)
@@ -464,7 +464,8 @@ def get_all_challenges(current_user):
         })
     return jsonify(resp), 200
 
-#challenge
+
+# challenge
 @routes.route('/challenge/<challenge_id>', methods=['GET'])
 @token_required
 def get_challenge(current_user, challenge_id):
