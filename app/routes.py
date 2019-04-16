@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, Blueprint
-from app.model import User, Post, Community, Comments, Likes, Steps
+from app.model import User, Post, Community, Comments, Likes, Steps, Challenge
 import re
 import datetime
 from app.helper import response, response_auth, token_required
@@ -95,7 +95,7 @@ def getuserprofileid(current_user, userid):
     isFollowing = False
     community = Community.get_community(current_user.id)
     for person in community:
-        if person.community_id == int(userid):
+        if person.community_id == userid:
             isFollowing = True
     count = Community.get_community_count(userid)
     post_count = Post.get_post_count(userid)
@@ -149,11 +149,33 @@ def post(current_user):
     if not all(k in values for k in required):
         return 'Missing values', 400
     description = values.get('description')
+
     image_url = values.get('image_url')
     userid = current_user.id
 
     post_item = Post(description, image_url, userid)
-    post_item.save()
+    post_id = post_item.save()
+
+    data = {}
+    for word in description.split():
+        if word.startswith("#"):
+            if "challenge" in word:
+                data['challenge'] = word[1:]
+            if "d" in word:
+                data['date'] = word[2:]
+            if "g" in word:
+                data['goal'] = word[2:]
+
+    required = ['challenge', 'date', 'goal']
+    if all(k in data for k in required):
+        end_date = {}
+        date = data["date"].split('-')
+        end_date['year'] = date[0]
+        end_date['month'] = date[1]
+        end_date['day'] = date[2]
+        challenge = Challenge(user_id=current_user.id, goal=data["goal"], challenge_name=data["challenge"],
+                              challenge_description=description, end_date=end_date, post_id=post_id)
+        challenge.save()
     return response('success', 'Successfully posted', 200)
 
 
@@ -333,6 +355,21 @@ def comment(current_user):
         return 'Missing values', 400
     comment = Comments(comment=values.get('comment'), post_id=values.get('post_id'), user_id=current_user.id)
     comment.save()
+
+    message = values.get('comment')
+    challenge = Challenge.check_postid(values.get('post_id'))
+    if challenge and Challenge.check_join(message, User.getusername(current_user.id)):
+        fields = {'user_id': current_user.id,
+                  'post_id': values.get('post_id'),
+                  'goal': challenge.goal,
+                  'start_date': challenge.start_date,
+                  'challenge_name': challenge.challenge_name,
+                  'challenge_description': challenge.challenge_description,
+                  'current_date': datetime.datetime.now().date(),
+                  'end_date': challenge.end_date
+                  }
+        Challenge.join_challenge(fields)
+
     return response('success', 'Commented successfully', 200)
 
 
@@ -389,7 +426,7 @@ def check_liker(current_user, post_id):
 @token_required
 def store_steps(current_user, steps):
     step = Steps(user_id=current_user.id, steps_no=steps)
-    if not Steps.update_if_instance_exist(datetime.datetime.now().date(),current_user.id, steps):
+    if not Steps.update_if_instance_exist(datetime.datetime.now().date(), current_user.id, steps):
         step.save()
     return response('success', 'Steps added successfully', 200)
 
@@ -403,6 +440,48 @@ def get_steps(current_user, limit):
         resp.append({
             'date': data.date,
             'steps': data.steps_no
+        })
+    return jsonify(resp), 200
+
+
+@routes.route('/challenge/getchallenges', methods=['GET'])
+@token_required
+def get_all_challenges(current_user):
+    challenges = Challenge.get_challenge_by_user_id(current_user.id)
+    resp = []
+    for challenge in challenges:
+        user = Challenge.get_creator(challenge.id)
+        username = User.getusername(user.id)
+        resp.append({
+            'steps': challenge.steps,
+            'start_date': challenge.start_date,
+            'goal': challenge.goal,
+            'role': challenge.role,
+            'challenge_name': challenge.challenge_name,
+            'challenge_description': challenge.challenge_description,
+            'end_date': challenge.end_date,
+            'creator': username
+        })
+    return jsonify(resp), 200
+
+
+# challenge
+@routes.route('/challenge/<challenge_id>', methods=['GET'])
+@token_required
+def get_challenge(current_user, challenge_id):
+    users = Challenge.get_users_performance(challenge_id)
+    resp = []
+    for user in users:
+        user_name = User.getusername(user.id)
+        resp.append({
+            'username': user_name,
+            'steps': user.steps,
+            'start_date': user.start_date,
+            'goal': user.goal,
+            'role': user.role,
+            'challenge_name': user.challenge_name,
+            'challenge_description': user.challenge_description,
+            'end_date': user.end_date
         })
     return jsonify(resp), 200
 
