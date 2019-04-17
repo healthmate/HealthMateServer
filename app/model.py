@@ -362,7 +362,7 @@ class Challenge(db.Model):
             steps += item.steps_no
         Challenge(user_id=user_id, post_id=post_id, goal=goal, challenge_name=challenge_name,
                   challenge_description=challenge_description,
-                  end_date=end_date, steps=steps, role="member", start_date=start_date).save()
+                  end_date=end_date, steps=steps, role="challenger", start_date=start_date).save()
 
     @staticmethod
     def get_users_performance(challenge_id):

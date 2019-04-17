@@ -452,6 +452,17 @@ def get_all_challenges(current_user):
     for challenge in challenges:
         user = Challenge.get_creator(challenge.id)
         username = User.getusername(user.user_id)
+        my_format = "%a, %d %b %Y %H:%M:%S %Z"
+        new_date = datetime.datetime.strptime(str(challenge.end_date), my_format)
+        users = Challenge.get_users_performance(challenge.id)
+        challenge_users = []
+        for user in users:
+            user_name = User.getusername(user.user_id)
+            challenge_users.append({
+                'username': user_name,
+                'steps': user.steps,
+                'role': user.role,
+            })
         resp.append({
             'steps': challenge.steps,
             'start_date': challenge.start_date,
@@ -459,10 +470,11 @@ def get_all_challenges(current_user):
             'role': challenge.role,
             'challenge_name': challenge.challenge_name,
             'challenge_description': challenge.challenge_description,
-            'end_date': challenge.end_date,
+            'end_date': str(new_date),
             'creator': username,
             'image_url': Post.get_post_image_url(challenge.post_id),
-            'challenge_id': challenge.id
+            'challenge_id': challenge.id,
+            'users': challenge_users
         })
     return jsonify(resp), 200
 
@@ -474,7 +486,7 @@ def get_challenge(current_user, challenge_id):
     users = Challenge.get_users_performance(challenge_id)
     resp = []
     for user in users:
-        user_name = User.getusername(user.id)
+        user_name = User.getusername(user.user_id)
         resp.append({
             'username': user_name,
             'steps': user.steps,
