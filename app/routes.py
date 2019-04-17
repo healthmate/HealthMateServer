@@ -451,7 +451,7 @@ def get_all_challenges(current_user):
     resp = []
     for challenge in challenges:
         user = Challenge.get_creator(challenge.id)
-        username = User.getusername(user.id)
+        username = User.getusername(user.user_id)
         resp.append({
             'steps': challenge.steps,
             'start_date': challenge.start_date,
