@@ -480,9 +480,9 @@ def get_all_challenges(current_user):
 
 
 # challenge
-@routes.route('/challenge/<challenge_id>', methods=['GET'])
+@routes.route('/challenge', methods=['GET'])
 @token_required
-def get_challenge(current_user, challenge_id):
+def get_challenge(current_user):
     #users = Challenge.get_users_performance(challenge_id)
     users = Challenge.get_all()
     resp = []
@@ -491,7 +491,7 @@ def get_challenge(current_user, challenge_id):
         resp.append({
             'username': user_name,
             'steps': user.steps,
-            'role': user.role,
+            'role': user.role
         })
     return jsonify(resp), 200
 
