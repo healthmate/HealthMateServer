@@ -365,8 +365,8 @@ class Challenge(db.Model):
                   end_date=end_date, steps=steps, role="challenger", start_date=start_date).save()
 
     @staticmethod
-    def get_users_performance(challenge_id):
-        return Challenge.query.filter(Challenge.id == challenge_id).order_by(Challenge.steps.desc()).all()
+    def get_users_performance(post_id):
+        return Challenge.query.filter(Challenge.post_id == post_id).order_by(Challenge.steps.desc()).all()
 
     @staticmethod
     def get_challenge_by_user_id(user_id):
