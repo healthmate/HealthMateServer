@@ -386,6 +386,10 @@ class Challenge(db.Model):
         check_username = message[1:]
         return True if '@' in message and check_username == username else False
 
+    @staticmethod
+    def get_all():
+        return Challenge.query.order_by(Challenge.steps.desc()).all()
+
 
 """class Notification(db.Model):
     __tablename__ = 'notifications'

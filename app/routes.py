@@ -483,19 +483,15 @@ def get_all_challenges(current_user):
 @routes.route('/challenge/<challenge_id>', methods=['GET'])
 @token_required
 def get_challenge(current_user, challenge_id):
-    users = Challenge.get_users_performance(challenge_id)
+    #users = Challenge.get_users_performance(challenge_id)
+    users = Challenge.get_all()
     resp = []
     for user in users:
         user_name = User.getusername(user.user_id)
         resp.append({
             'username': user_name,
             'steps': user.steps,
-            'start_date': user.start_date,
-            'goal': user.goal,
             'role': user.role,
-            'challenge_name': user.challenge_name,
-            'challenge_description': user.challenge_description,
-            'end_date': user.end_date
         })
     return jsonify(resp), 200
 
