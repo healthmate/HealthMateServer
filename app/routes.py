@@ -461,8 +461,8 @@ def get_all_challenges(current_user):
             'challenge_description': challenge.challenge_description,
             'end_date': challenge.end_date,
             'creator': username,
-            'image_url': Post.get_post_image_url(challenge.post_id)
-
+            'image_url': Post.get_post_image_url(challenge.post_id),
+            'challenge_id': challenge.id
         })
     return jsonify(resp), 200
 
