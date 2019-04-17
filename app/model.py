@@ -366,7 +366,7 @@ class Challenge(db.Model):
 
     @staticmethod
     def get_users_performance(challenge_id):
-        return Challenge.query.filter(Challenge.id == challenge_id).order_by(Challenge.steps.desc()).all()
+        return Challenge.query.filter(Challenge.id == challenge_id).all()
 
     @staticmethod
     def get_challenge_by_user_id(user_id):
