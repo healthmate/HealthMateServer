@@ -366,7 +366,7 @@ class Challenge(db.Model):
 
     @staticmethod
     def get_users_performance(challenge_id):
-        return Challenge.query.filter(Challenge.id == challenge_id).all()
+        return Challenge.query.filter(Challenge.id == challenge_id).order_by(Challenge.steps.desc()).all()
 
     @staticmethod
     def get_challenge_by_user_id(user_id):
@@ -387,8 +387,8 @@ class Challenge(db.Model):
         return True if '@' in message and check_username == username else False
 
     @staticmethod
-    def get_all(challenge_id):
-        return Challenge.query.filter(Challenge.id == challenge_id).order_by(Challenge.steps.desc()).all()
+    def get_all():
+        return Challenge.query.order_by(Challenge.steps.desc()).all()
 
 
 """class Notification(db.Model):

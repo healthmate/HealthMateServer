@@ -480,15 +480,16 @@ def get_all_challenges(current_user):
 
 
 # challenge
-@routes.route('/challenge/<challenge_id>', methods=['GET'])
+@routes.route('/challenge', methods=['GET'])
 @token_required
-def get_challenge(current_user, challenge_id):
+def get_challenge(current_user):
     #users = Challenge.get_users_performance(challenge_id)
-    users = Challenge.get_all(challenge_id)
+    users = Challenge.get_all()
     resp = []
     for user in users:
         user_name = User.getusername(user.user_id)
         resp.append({
+            'challenge_id': user.id,
             'username': user_name,
             'steps': user.steps,
             'role': user.role
