@@ -164,6 +164,11 @@ class Post(db.Model):
             post_count = post_count + 1
         return post_count
 
+    @staticmethod
+    def get_post_image_url(post_id):
+        post = Post.query.filter_by(id=post_id).first()
+        return post.image_url
+
 
 class Comments(db.Model):
     __tablename__ = 'comments'
