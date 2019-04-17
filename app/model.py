@@ -370,7 +370,7 @@ class Challenge(db.Model):
     @staticmethod
     def get_creator(challenge_id):
         return Challenge.query.filter(
-            and_(Challenge.challenge_id == challenge_id, Challenge.role == "creator")).first()
+            and_(Challenge.id == challenge_id, Challenge.role == "creator")).first()
 
     @staticmethod
     def check_postid(post_id):
