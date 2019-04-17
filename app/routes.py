@@ -368,7 +368,10 @@ def comment(current_user):
                   'current_date': datetime.datetime.now().date(),
                   'end_date': challenge.end_date
                   }
-        Challenge.join_challenge(fields)
+        if not Challenge.check_user_joined(current_user.id, values.get('post_id')):
+            Challenge.join_challenge(fields)
+        else:
+            return response('failed', 'already joined', 200)
 
     return response('success', 'Commented successfully', 200)
 
@@ -480,7 +483,7 @@ def get_all_challenges(current_user):
 
 
 # challenge
-@routes.route('/challenge', methods=['GET'])
+"""@routes.route('/challenge', methods=['GET'])
 @token_required
 def get_challenge(current_user):
     #users = Challenge.get_users_performance(challenge_id)
@@ -497,7 +500,7 @@ def get_challenge(current_user):
     return jsonify(resp), 200
 
 
-"""@routes.route('/notification/save', methods=['POST'])
+@routes.route('/notification/save', methods=['POST'])
 @token_required
 def save_notification(current_user):
     values = request.get_json()

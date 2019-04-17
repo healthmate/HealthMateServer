@@ -390,6 +390,11 @@ class Challenge(db.Model):
     def get_all():
         return Challenge.query.order_by(Challenge.steps.desc()).all()
 
+    @staticmethod
+    def check_user_joined(user_id, post_id):
+        return Challenge.query.filter(
+            and_(Challenge.user_id == user_id, Challenge.post_id == post_id)).first()
+
 
 """class Notification(db.Model):
     __tablename__ = 'notifications'
