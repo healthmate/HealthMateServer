@@ -453,7 +453,7 @@ def get_all_challenges(current_user):
         user = Challenge.get_creator(challenge.id)
         username = User.getusername(user.user_id)
         my_format = "%Y-%m-%d %H:%M:%S"
-        new_date = datetime.datetime.strptime(str(challenge.end_date), my_format)
+        new_date = datetime.datetime.strptime(str(challenge.end_date), my_format).date()
         users = Challenge.get_users_performance(challenge.id)
         challenge_users = []
         for user in users:
