@@ -371,7 +371,7 @@ def comment(current_user):
         if not Challenge.check_user_joined(current_user.id, values.get('post_id')):
             Challenge.join_challenge(fields)
         else:
-            return response('failed', 'already joined', 200)
+            return response('failed', 'already joined', 400)
 
     return response('success', 'Commented successfully', 200)
 
