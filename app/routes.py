@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, Blueprint
-from app.model import User, Post, Community, Comments, Likes, Steps, Challenge
+from app.model import User, Post, Community, Comments, Likes, Steps, Challenge, Notification
 import re
 import datetime
 from app.helper import response, response_auth, token_required
@@ -390,20 +390,6 @@ def getcomment(post_id):
     return jsonify(comments), 200
 
 
-@routes.route('/getcommentee', methods=['POST'])
-def get_commenteee():
-    comments = []
-    commentobj = Comments.getcomments(post_id=1)
-    for c in commentobj:
-        comments.append({
-            'comment': c.comment,
-            'user_id': c.user_id,
-            'create_at': c.create_at
-        })
-
-    return jsonify(comments), 200
-
-
 @routes.route('/getlikers/<post_id>', methods=['POST'])
 def get_likers(post_id):
     response = []
@@ -431,6 +417,11 @@ def store_steps(current_user, steps):
     step = Steps(user_id=current_user.id, steps_no=steps)
     if not Steps.update_if_instance_exist(datetime.datetime.now().date(), current_user.id, steps):
         step.save()
+    challenges = Challenge.get_challenge_within_date_by_user_id(current_user.id, datetime.datetime.now())
+    if challenges:
+        for challenge in challenges:
+            Challenge.update_challenge_steps(challenge.id, steps)
+
     return response('success', 'Steps added successfully', 200)
 
 
@@ -482,24 +473,6 @@ def get_all_challenges(current_user):
     return jsonify(resp), 200
 
 
-# challenge
-"""@routes.route('/challenge', methods=['GET'])
-@token_required
-def get_challenge(current_user):
-    #users = Challenge.get_users_performance(challenge_id)
-    users = Challenge.get_all()
-    resp = []
-    for user in users:
-        user_name = User.getusername(user.user_id)
-        resp.append({
-            'challenge_id': user.id,
-            'username': user_name,
-            'steps': user.steps,
-            'role': user.role
-        })
-    return jsonify(resp), 200
-
-
 @routes.route('/notification/save', methods=['POST'])
 @token_required
 def save_notification(current_user):
@@ -508,29 +481,42 @@ def save_notification(current_user):
     if not all(k in values for k in required):
         return 'Missing values', 400
     user_id = current_user.id
-    is_deleted = values.get("is_deleted")
     message = values.get("message")
-    is_challenge = "False"
     is_post_related = "False"
     is_community_request = "False"
     community_invitee = "False"
-    challenge_id = None
     post_id = None
 
-    if values.get("is_challenge"):
-        is_challenge = values.get("is_challenge")
     if values.get("is_post_related"):
         is_post_related = values.get("is_post_related")
     if values.get("is_community_request"):
         is_community_request = values.get("is_community_request")
     if values.get("community_invitee"):
         community_invitee = values.get("community_invitee")
-    if values.get("challenge_id"):
-        challenge_id = values.get("challenge_id")
     if values.get("post_id"):
         post_id = values.get("post_id")
 
-    notification = Notification(user_id=user_id, is_deleted=is_deleted, message=message, is_challenge=is_challenge,
-                                is_post_related=is_post_related, is_community_request=is_community_request,
-                                community_invitee=community_invitee, challenge_id=challenge_id, post_id=post_id)
-    notification.save()"""
+    notification = Notification(user_id=user_id, message=message,
+                                is_post_related=is_post_related,
+                                community_invitee=community_invitee, post_id=post_id,
+                                is_community_request=is_community_request)
+    notification.save()
+
+
+@routes.route('/notification/get', methods=['GET'])
+@token_required
+def get_notification(current_user):
+    notifications = Notification.get_notifications(current_user.id)
+    response = []
+    for notification in notifications:
+        response.append({
+            "id": notification.id,
+            "user_id": notification.user_id,
+            "create_at": notification.create_at,
+            "message": notification.message,
+            "is_post_related": notification.is_post_related,
+            "is_community_request": notification.is_community_request,
+            "community_invitee": notification.community_invitee,
+            "post_id": notification.post_id
+        })
+    return jsonify(response), 200
