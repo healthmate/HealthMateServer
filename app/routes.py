@@ -477,7 +477,7 @@ def get_all_challenges(current_user):
 @token_required
 def save_notification(current_user):
     values = request.get_json()
-    required = ['user_id', 'message']
+    required = ['message']
     if not all(k in values for k in required):
         return 'Missing values', 400
     user_id = current_user.id
@@ -501,6 +501,7 @@ def save_notification(current_user):
                                 community_invitee=community_invitee, post_id=post_id,
                                 is_community_request=is_community_request)
     notification.save()
+    return response('success', 'notification sent successfully', 200)
 
 
 @routes.route('/notification/get', methods=['GET'])
