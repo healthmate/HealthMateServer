@@ -484,7 +484,7 @@ def save_notification(current_user):
     message = values.get("message")
     is_post_related = "False"
     is_community_request = "False"
-    community_invitee = "False"
+    community_invitee = None
     post_id = None
 
     if values.get("is_post_related"):
