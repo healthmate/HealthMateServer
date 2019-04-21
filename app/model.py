@@ -19,6 +19,7 @@ class User(db.Model):
     post = db.relationship('Post', backref='post', lazy='dynamic')
     community = db.relationship('Community', backref='community', lazy='dynamic')
     steps = db.relationship('Steps', backref='step', lazy='dynamic')
+    notifications = db.relationship('Notification', backref='notifications', lazy='dynamic')
 
     def __init__(self, email, password, first_name, last_name, username):
         self.email = email
@@ -405,7 +406,6 @@ class Challenge(db.Model):
         instance.steps = instance.steps + steps
         db.session.commit()
 
-
 class Notification(db.Model):
     __tablename__ = 'notifications'
 
@@ -413,8 +413,8 @@ class Notification(db.Model):
     user_id = db.Column(db.String, db.ForeignKey('users.id'))
     message = db.Column(db.String, nullable=False)
     create_at = db.Column(db.DateTime, nullable=False)
-    community_invitee = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
-    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=True)
+    community_invitee = db.Column(db.String, db.ForeignKey('users.id'), nullable=True)
+    post_id = db.Column(db.String, db.ForeignKey('posts.id'), nullable=True)
     is_post_related = db.Column(db.String, nullable=False)
     is_community_request = db.Column(db.String, nullable=False)
 
@@ -436,7 +436,7 @@ class Notification(db.Model):
         Persist the steps in the database
         :param notifications:
         :return:"""
-        
+
         db.session.add(self)
         db.session.commit()
 

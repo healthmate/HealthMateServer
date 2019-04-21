@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: adcbc785036b
-Revises: 7d0c226dddd3
-Create Date: 2019-04-21 18:34:49.380664
+Revision ID: 9ab1f18ae1d9
+Revises: e5aaf7e43262
+Create Date: 2019-04-21 19:17:56.252628
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'adcbc785036b'
-down_revision = '7d0c226dddd3'
+revision = '9ab1f18ae1d9'
+down_revision = 'e5aaf7e43262'
 branch_labels = None
 depends_on = None
 
@@ -23,8 +23,8 @@ def upgrade():
     sa.Column('user_id', sa.String(), nullable=True),
     sa.Column('message', sa.String(), nullable=False),
     sa.Column('create_at', sa.DateTime(), nullable=False),
-    sa.Column('community_invitee', sa.Integer(), nullable=True),
-    sa.Column('post_id', sa.Integer(), nullable=True),
+    sa.Column('community_invitee', sa.String(), nullable=True),
+    sa.Column('post_id', sa.String(), nullable=True),
     sa.Column('is_post_related', sa.String(), nullable=False),
     sa.Column('is_community_request', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['community_invitee'], ['users.id'], ),
