@@ -414,7 +414,7 @@ class Notification(db.Model):
     message = db.Column(db.String, nullable=False)
     create_at = db.Column(db.DateTime, nullable=False)
     community_invitee = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
-    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('posts.id'), nullable=True)
     is_post_related = db.Column(db.String, nullable=False)
     is_community_request = db.Column(db.String, nullable=False)
 
