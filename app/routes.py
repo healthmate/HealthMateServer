@@ -480,7 +480,7 @@ def save_notification(current_user):
     required = ['message']
     if not all(k in values for k in required):
         return 'Missing values', 400
-    user_id = current_user.id
+    user_id = values.get("user_id")
     message = values.get("message")
     is_post_related = "False"
     is_community_request = "False"
@@ -492,7 +492,7 @@ def save_notification(current_user):
     if values.get("is_community_request"):
         is_community_request = values.get("is_community_request")
     if values.get("community_invitee"):
-        community_invitee = values.get("community_invitee")
+        community_invitee = current_user.id
     if values.get("post_id"):
         post_id = values.get("post_id")
 
