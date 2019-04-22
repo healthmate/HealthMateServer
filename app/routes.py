@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, Blueprint
-from app.model import User, Post, Community, Comments, Likes, Steps, Challenge, Notification
+from app.model import User, Post, Community, Comments, Likes, Steps, Challenge
 import re
 import datetime
 from app.helper import response, response_auth, token_required
@@ -99,13 +99,15 @@ def getuserprofileid(current_user, userid):
             isFollowing = True
     count = Community.get_community_count(userid)
     post_count = Post.get_post_count(userid)
+    request_pending = Notification.check_if_request_pending(user_id=userid, sender=current_user.id)
 
     data = {
         'user_id': userid,
         'username': User.getusername(userid),
         'community': count,
         'posts': post_count,
-        'isFollowing': isFollowing
+        'isFollowing': isFollowing,
+        'request_pending': request_pending
     }
 
     return jsonify(data), 200
@@ -473,7 +475,7 @@ def get_all_challenges(current_user):
     return jsonify(resp), 200
 
 
-@routes.route('/notification/save', methods=['POST'])
+"""@routes.route('/notification/save', methods=['POST'])
 @token_required
 def save_notification(current_user):
     values = request.get_json()
@@ -521,3 +523,21 @@ def get_notification(current_user):
             "post_id": notification.post_id
         })
     return jsonify(response), 200
+
+
+@routes.route('/notification/update', methods=['POST'])
+@token_required
+def update_community_request(current_user):
+    values = request.get_json()
+    required = ['community_id', 'is_accepted', 'notification_id']
+    if not all(k in values for k in required):
+        return 'Missing values', 400
+    is_accepted = values.get("is_accepted")
+    if is_accepted == "True" and not Community.already_community(community_id=current_user.id,
+                                                                 user_id=values.get("community_id")):
+        community = Community(community_id=values.get("community_id"), user_id=current_user.id)
+        community.save()
+        community = Community(community_id=current_user.id, user_id=values.get("community_id"))
+        community.save()
+    Notification.request_answered(values.get("notification_id"))
+"""

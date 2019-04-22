@@ -258,6 +258,12 @@ class Community(db.Model):
             community_count = community_count + 1
         return community_count
 
+    @staticmethod
+    def already_community(community_id, user_id):
+        instance = Community.query.filter(
+            and_(Community.user_id == user_id, Community.community_id == community_id)).first()
+        return instance
+
 
 class Steps(db.Model):
     """
@@ -406,6 +412,7 @@ class Challenge(db.Model):
         instance.steps = instance.steps + steps
         db.session.commit()
 
+"""
 class Notification(db.Model):
     __tablename__ = 'notifications'
 
@@ -417,6 +424,7 @@ class Notification(db.Model):
     post_id = db.Column(db.String, db.ForeignKey('posts.id'), nullable=True)
     is_post_related = db.Column(db.String, nullable=False)
     is_community_request = db.Column(db.String, nullable=False)
+    community_request_answered = db.Column(db.String, nullable=False)
 
     def __init__(self, user_id, message=None, community_invitee=None,
                  post_id=None, is_post_related="False", is_community_request="False"):
@@ -430,12 +438,9 @@ class Notification(db.Model):
             self.community_invitee = community_invitee
         if post_id:
             self.post_id = post_id
+        self.community_request_answered = "False"
 
     def save(self):
-        """
-        Persist the steps in the database
-        :param notifications:
-        :return:"""
 
         db.session.add(self)
         db.session.commit()
@@ -444,3 +449,20 @@ class Notification(db.Model):
     def get_notifications(user_id):
         return Notification.query.filter(
             Notification.user_id == user_id).all()
+
+    @staticmethod
+    def request_answered(notification_id):
+        notification = Notification.query.filter(Notification.id == notification_id).first()
+        notification.community_request_answered = "True"
+        db.session.commit()
+
+    @staticmethod
+    def check_if_request_pending(user_id, sender):
+
+        instance = Notification.query.filter(
+            and_(Notification.user_id == user_id, Notification.community_invitee == sender,
+                 Notification.community_request_answered == "False")).first()
+        if instance:
+            return True
+        return False
+"""
