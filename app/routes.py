@@ -441,7 +441,8 @@ def get_steps(current_user, limit):
 @routes.route('/challenge/getchallenges', methods=['GET'])
 @token_required
 def get_all_challenges(current_user):
-    challenges = Challenge.get_challenge_by_user_id(current_user.id)
+    #challenges = Challenge.get_challenge_by_user_id(current_user.id)
+    challenges = Challenge.get_challenge_within_date_by_user_id(current_user.id, datetime.datetime.now())
     resp = []
     for challenge in challenges:
         user = Challenge.get_creator(challenge.id)
