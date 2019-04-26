@@ -408,7 +408,7 @@ class Challenge(db.Model):
     @staticmethod
     def update_challenge_steps(challenge_id, steps):
         instance = Challenge.query.filter_by(id=challenge_id).first()
-        instance.steps = instance.steps + steps
+        instance.steps = int(instance.steps) + int(steps)
         db.session.commit()
 
 """
