@@ -99,15 +99,13 @@ def getuserprofileid(current_user, userid):
             isFollowing = True
     count = Community.get_community_count(userid)
     post_count = Post.get_post_count(userid)
-    request_pending = Notification.check_if_request_pending(user_id=userid, sender=current_user.id)
 
     data = {
         'user_id': userid,
         'username': User.getusername(userid),
         'community': count,
         'posts': post_count,
-        'isFollowing': isFollowing,
-        'request_pending': request_pending
+        'isFollowing': isFollowing
     }
 
     return jsonify(data), 200
@@ -157,9 +155,9 @@ def post(current_user):
 
     post_item = Post(description, image_url, userid)
     post_id = post_item.save()
-
+    temp = description.lower()
     data = {}
-    for word in description.split():
+    for word in temp.split():
         if word.startswith("#"):
             if "challenge" in word:
                 data['challenge'] = word[1:]
