@@ -161,9 +161,9 @@ def post(current_user):
         if word.startswith("#"):
             if "challenge" in word:
                 data['challenge'] = word[1:]
-            if "d" in word:
+            if word[1:].startswith("d"):
                 data['date'] = word[2:]
-            if "g" in word:
+            if word[1:].startswith("g"):
                 data['goal'] = word[2:]
 
     required = ['challenge', 'date', 'goal']
@@ -175,7 +175,9 @@ def post(current_user):
         end_date['day'] = date[2]
         challenge = Challenge(user_id=current_user.id, goal=data["goal"], challenge_name=data["challenge"],
                               challenge_description=description, end_date=end_date, post_id=post_id)
-        challenge.save()
+        id = challenge.save()
+        if not id:
+            return response('failed', 'Challenge not created', 401)
     return response('success', 'Successfully posted', 200)
 
 
