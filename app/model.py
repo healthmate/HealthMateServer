@@ -302,7 +302,7 @@ class Steps(db.Model):
 
     @staticmethod
     def get_steps(user_id, limit):
-        return Steps.query.filter_by(user_id=user_id).limit(limit)
+        return Steps.query.filter_by(user_id=user_id).order_by(Steps.date.asc()).limit(limit)
 
 
 class Challenge(db.Model):
