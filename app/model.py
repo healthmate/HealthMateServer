@@ -411,6 +411,15 @@ class Challenge(db.Model):
         instance.steps = int(instance.steps) + int(steps)
         db.session.commit()
 
+    @staticmethod
+    def get_user_steps_by_challenge(current_date, start_date, user_id):
+        record = Steps.query.filter(and_(Steps.date <= current_date, Steps.date >= start_date,
+                                         Steps.user_id == user_id))
+        steps = 0
+        for item in record:
+            steps += int(item.steps_no)
+        return steps
+
 """
 class Notification(db.Model):
     __tablename__ = 'notifications'

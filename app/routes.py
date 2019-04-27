@@ -417,10 +417,10 @@ def store_steps(current_user, steps):
     step = Steps(user_id=current_user.id, steps_no=steps)
     if not Steps.update_if_instance_exist(datetime.datetime.now().date(), current_user.id, steps):
         step.save()
-    challenges = Challenge.get_challenge_within_date_by_user_id(current_user.id, datetime.datetime.now())
+    """challenges = Challenge.get_challenge_within_date_by_user_id(current_user.id, datetime.datetime.now())
     if challenges:
         for challenge in challenges:
-            Challenge.update_challenge_steps(challenge.id, steps)
+            Challenge.update_challenge_steps(challenge.id, steps)"""
 
     return response('success', 'Steps added successfully', 200)
 
@@ -448,6 +448,7 @@ def get_all_challenges(current_user):
         user = Challenge.get_creator(challenge.id)
         username = User.getusername(user.user_id)
         my_format = "%Y-%m-%d %H:%M:%S"
+        start_date = datetime.datetime.strptime(str(challenge.start_date), my_format).date()
         new_date = datetime.datetime.strptime(str(challenge.end_date), my_format).date()
         users = Challenge.get_users_performance(challenge.post_id)
         challenge_users = []
@@ -455,11 +456,12 @@ def get_all_challenges(current_user):
             user_name = User.getusername(user.user_id)
             challenge_users.append({
                 'username': user_name,
-                'steps': user.steps,
-                'role': user.role,
+                'steps': Challenge.get_user_steps_by_challenge(datetime.datetime.now().date(),
+                                                               start_date, user.user_id),
+                'role': user.role
             })
         resp.append({
-            'steps': challenge.steps,
+            'steps': Challenge.get_user_steps_by_challenge(datetime.datetime.now().date(), start_date, current_user.id),
             'start_date': challenge.start_date,
             'goal': challenge.goal,
             'role': challenge.role,
