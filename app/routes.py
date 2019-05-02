@@ -372,7 +372,6 @@ def comment(current_user):
             Challenge.join_challenge(fields)
         else:
             return response('failed', 'already joined', 400)
-
     return response('success', 'Commented successfully', 200)
 
 
