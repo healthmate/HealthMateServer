@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, Blueprint
 from app.model import User, Post, Community, Comments, Likes, Steps, Challenge
 import re
 import datetime
-from app.helper import response, response_auth, token_required
+from app.helper import response, response_auth, response_login, token_required
 from app import bcrypt
 
 # app = Flask(__name__)
@@ -47,8 +47,12 @@ def login():
     if re.match(r"[^@]+@[^@]+\.[^@]+", email) and len(password) > 4:
         user = User.query.filter_by(email=email).first()
         if user and bcrypt.check_password_hash(user.password, password):
-            return response_auth(User.getusername(user.id), 'Successfully logged In', user.encode_auth_token(user.id),
-                                 200)
+            data = {
+                'username': user.username,
+                'fullname': user.first_name + " " + user.last_name
+            }
+            return response_login(data, 'Successfully logged In', user.encode_auth_token(user.id),
+                                  200)
         return response('failed', 'User does not exist or password is incorrect', 401)
     return response('failed', 'Missing or wrong email format or password is less than four characters', 401)
 
@@ -99,13 +103,14 @@ def getuserprofileid(current_user, userid):
             isFollowing = True
     count = Community.get_community_count(userid)
     post_count = Post.get_post_count(userid)
-
+    user = User.get_by_id(userid)
     data = {
         'user_id': userid,
         'username': User.getusername(userid),
         'community': count,
         'posts': post_count,
-        'isFollowing': isFollowing
+        'isFollowing': isFollowing,
+        'full_name': user.first_name + " " + user.last_name
     }
 
     return jsonify(data), 200
@@ -440,7 +445,7 @@ def get_steps(current_user, limit):
 @routes.route('/challenge/getchallenges', methods=['GET'])
 @token_required
 def get_all_challenges(current_user):
-    #challenges = Challenge.get_challenge_by_user_id(current_user.id)
+    # challenges = Challenge.get_challenge_by_user_id(current_user.id)
     challenges = Challenge.get_challenge_within_date_by_user_id(current_user.id, datetime.datetime.now())
     resp = []
     for challenge in challenges:
