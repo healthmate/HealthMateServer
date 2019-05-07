@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, Blueprint
-from app.model import User, Post, Community, Comments, Likes, Steps, Challenge
+from app.model import User, Post, Community, Comments, Likes, Steps, Challenge, UserSetting
 import re
 import datetime
 from app.helper import response, response_auth, token_required
@@ -520,3 +520,33 @@ def save_notification(current_user):
                                 is_post_related=is_post_related, is_community_request=is_community_request,
                                 community_invitee=community_invitee, challenge_id=challenge_id, post_id=post_id)
     notification.save()"""
+
+
+@routes.route("/updatesettings", methods=['POST'])
+@token_required
+def update_user_settings(current_user):
+    values = request.get_json()
+    required = ['average_weight', 'goal_weight', 'is_diabetic',
+                ]
+
+    if not all(k in values for k in required):
+        return 'Missing values', 400
+    resp = UserSetting.update(current_user.id, values.get('average_weight'), values.get('goal_weight')
+                              , values.get('is_diabetic'))
+
+    if resp:
+        return response('success', 'successfully updated user settings', 20)
+    else:
+        return response('failed','Failed update', 400)
+
+
+# @routes.route("/getsettings", methods=['GET'])
+# @token_required
+# def getsettings(current_user):
+#     setting = UserSetting.get_user_settings(current_user.id)
+#     data = {
+#         'average_weight': setting.average_weight,
+#         'goal_weight': setting.goal_weight,
+#         'net_calorie_goal': setting.net_calorie,
+#         ''
+#     }

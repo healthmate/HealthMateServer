@@ -38,6 +38,8 @@ class User(db.Model):
         """
         db.session.add(self)
         db.session.commit()
+        settings = UserSetting(self.id)
+        settings.save()
         return self.encode_auth_token(self.id)
 
     def encode_auth_token(self, user_id):
@@ -426,3 +428,146 @@ class Challenge(db.Model):
     def get_notifications(user_id):
         return Notification.query.filter(
             and_(Notification.user_id == user_id, Notification.is_deleted == "False")).all()"""
+
+
+class UserSetting(db.Model):
+    __tablename__ = "usersetting"
+    user_id = db.Column(db.String(255), primary_key=True, foreign_key=True, required=True)
+    average_weight = db.Column(db.String, nullable=False)
+    height = db.Column(db.String, nullable=False)
+    goal_weight = db.Column(db.String(255), nullable=False)
+    weekly_goal = db.Column(db.String(255), nullable=False)
+    net_calorie_goal = db.Column(db.String, nullable=False)
+    is_diabetic = db.Column(db.String, nullable=False)
+    activity_level = db.Column(db.String, nullable=False)
+
+    def __init__(self, user_id):
+        self.user_id = user_id
+        """self.average_weight = average_weight
+        self.goal_weight = goal_weight
+        self.weekly_goal = weekly_goal
+        self.net_calorie_goal = net_calorie_goal
+        self.is_diabetic = is_diabetic
+        self.image_url = image_url"""
+
+    def save(self):
+        db.Session.add(self)
+        db.Session.commit()
+
+    @staticmethod
+    def get_user_settings(user_id):
+        return UserSetting.query.filterby(user_id=user_id).first()
+
+    @staticmethod
+    def update(user_id, average_weight, goal_weight, is_diabetic, height, activity_level):
+
+        instance = UserSetting.query.filter(UserSetting.user_id == user_id).first()
+        if instance:
+            instance.average_weight = average_weight
+            instance.goal_weight = goal_weight
+            instance.is_diabetic = is_diabetic
+            instance.height = height
+            instance.activity_level = activity_level
+
+            db.session.commit()
+            return True
+        return False
+
+    @staticmethod
+    def centimetertoinches(user_id):
+        user_setting = UserSetting.query.filter_by(id=user_id).first()
+        inches = user_setting.height / 2.54
+        return inches
+
+    @staticmethod
+    def kgtopounds(user_id):
+        user_setting = UserSetting.query.filter_by(id=user_id).first()
+        pounds = user_setting.average_weight * 2.205
+        return pounds
+
+    @staticmethod
+    def calculate_bmr(user_id):
+        height = UserSetting.centimetertoinches(user_id)
+        average_weight = UserSetting.kgtopounds(user_id)
+        user = User.query.filter_by(id=user_id).first()
+        user_gender = user.gender
+        user_age = user.age
+
+        if user_gender == 'M':
+            bmr = (12.7 * height) + (6.23 * average_weight) - (6.8 * user_age)
+            total_bmr = bmr + 66
+            return total_bmr
+
+        else:
+            bmr = (4.7 * height) + (4.35 * average_weight) - (4.7 * user_age)
+            total_bmr = bmr + 655
+            return total_bmr
+
+    @staticmethod
+    def calorie_needs(user_id):
+        total_bmr = UserSetting.calculate_bmr(user_id)
+        user_setting = UserSetting.query.filter_by(id=user_id).first()
+        activity_level = user_setting.actvity_level
+
+        if activity_level == "Low":
+            return total_bmr * 1.2
+        elif activity_level == "Lightly active":
+            return total_bmr * 1.375
+        elif activity_level == "moderately active":
+            return total_bmr * 1.55
+        elif activity_level == "very active":
+            return total_bmr * 1.725
+        else:
+            return total_bmr * 1.9
+
+    @staticmethod
+    def average_calorie(user_id):
+        average_calorie = UserSetting.calorie_needs(user_id)
+        return average_calorie
+
+
+class Recommendation(db.Model):
+    __tablename__ = "mealtable"
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    name_of_food = db.Column(db.String(255), nullable=False)
+    calories = db.Column(db.Integer, nullable=False)
+    is_diabetic = db.Column(db.String, nullable=False)
+    breakfast = db.Column(db.String, nullable=False)
+    lunch = db.Column(db.String, nullable=False)
+    dinner = db.Column(db.String, nullable=False)
+
+    # def __init__(self, id, name_of_food, calories, is_diabetic, breakfast, lunch, dinner):
+    #     self.id = id
+    #     self.name_of_food = name_of_food
+    #     self.calories = calories
+    #     self.is_diabetic = is_diabetic
+    #     self.breakfast = breakfast
+    #     self.lunch = lunch
+    #     self.dinner = dinner
+    #
+    # def save(self):
+    #     db.Session.add(self)
+    #     db.Session.commit()
+
+    """
+    Method for recommendation algorithm
+    """
+
+
+class Food(db.Model):
+    __tablename__ = "food"
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    name_of_food = db.Column(db.String(255), nullable=False)
+    grammes = db.Column(db.Integer, nullable=False)
+
+    # def __init__(self, id, name_of_food, grammes):
+    #     self.id = id
+    #     self.name_of_food = name_of_food
+    #     self.grammes = grammes
+
+
+class FoodHistory(db.Model):
+    __tablename__ = "foodhistory"
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    name_of_food = db.Column(db.String(255), nullable=False)
+    date = db.Column(db.DateTime, nullable=False)
