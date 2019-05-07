@@ -49,7 +49,8 @@ def login():
         if user and bcrypt.check_password_hash(user.password, password):
             data = {
                 'username': user.username,
-                'fullname': user.first_name + " " + user.last_name
+                'fullname': user.first_name + " " + user.last_name,
+                'profile_pic': user.profile_pic
             }
             return response_login(data, 'Successfully logged In', user.encode_auth_token(user.id),
                                   200)
@@ -480,36 +481,6 @@ def get_all_challenges(current_user):
     return jsonify(resp), 200
 
 
-"""@routes.route('/notification/save', methods=['POST'])
-@token_required
-def save_notification(current_user):
-    values = request.get_json()
-    required = ['message']
-    if not all(k in values for k in required):
-        return 'Missing values', 400
-    user_id = values.get("user_id")
-    message = values.get("message")
-    is_post_related = "False"
-    is_community_request = "False"
-    community_invitee = None
-    post_id = None
-
-    if values.get("is_post_related"):
-        is_post_related = values.get("is_post_related")
-    if values.get("is_community_request"):
-        is_community_request = values.get("is_community_request")
-    if values.get("community_invitee"):
-        community_invitee = current_user.id
-    if values.get("post_id"):
-        post_id = values.get("post_id")
-
-<<<<<<< HEAD
-    notification = Notification(user_id=user_id, is_deleted=is_deleted, message=message, is_challenge=is_challenge,
-                                is_post_related=is_post_related, is_community_request=is_community_request,
-                                community_invitee=community_invitee, challenge_id=challenge_id, post_id=post_id)
-    notification.save()"""
-
-
 @routes.route("/updatesettings", methods=['POST'])
 @token_required
 def update_user_settings(current_user):
@@ -523,9 +494,9 @@ def update_user_settings(current_user):
                               , values.get('is_diabetic'))
 
     if resp:
-        return response('success', 'successfully updated user settings', 20)
+        return response('success', 'successfully updated user settings', 200)
     else:
-        return response('failed','Failed update', 400)
+        return response('failed', 'Failed update', 400)
 
 
 # @routes.route("/getsettings", methods=['GET'])
@@ -538,48 +509,3 @@ def update_user_settings(current_user):
 #         'net_calorie_goal': setting.net_calorie,
 #         ''
 #     }
-=======
-    notification = Notification(user_id=user_id, message=message,
-                                is_post_related=is_post_related,
-                                community_invitee=community_invitee, post_id=post_id,
-                                is_community_request=is_community_request)
-    notification.save()
-    return response('success', 'notification sent successfully', 200)
-
-
-@routes.route('/notification/get', methods=['GET'])
-@token_required
-def get_notification(current_user):
-    notifications = Notification.get_notifications(current_user.id)
-    response = []
-    for notification in notifications:
-        response.append({
-            "id": notification.id,
-            "user_id": notification.user_id,
-            "create_at": notification.create_at,
-            "message": notification.message,
-            "is_post_related": notification.is_post_related,
-            "is_community_request": notification.is_community_request,
-            "community_invitee": notification.community_invitee,
-            "post_id": notification.post_id
-        })
-    return jsonify(response), 200
-
-
-@routes.route('/notification/update', methods=['POST'])
-@token_required
-def update_community_request(current_user):
-    values = request.get_json()
-    required = ['community_id', 'is_accepted', 'notification_id']
-    if not all(k in values for k in required):
-        return 'Missing values', 400
-    is_accepted = values.get("is_accepted")
-    if is_accepted == "True" and not Community.already_community(community_id=current_user.id,
-                                                                 user_id=values.get("community_id")):
-        community = Community(community_id=values.get("community_id"), user_id=current_user.id)
-        community.save()
-        community = Community(community_id=current_user.id, user_id=values.get("community_id"))
-        community.save()
-    Notification.request_answered(values.get("notification_id"))
-"""
->>>>>>> e5306be1899b77d220cfe9c83f2c0ebe765e5cef

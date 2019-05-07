@@ -19,8 +19,11 @@ class User(db.Model):
     post = db.relationship('Post', backref='post', lazy='dynamic')
     community = db.relationship('Community', backref='community', lazy='dynamic')
     steps = db.relationship('Steps', backref='step', lazy='dynamic')
+    profile_pic = db.Column(db.String(255), nullable=True)
+    gender = db.Column(db.String, nullable=True)
+    age = db.Column(db.Integer, nullable=True)
 
-    def __init__(self, email, password, first_name, last_name, username):
+    def __init__(self, email, password, first_name, last_name, username, gender, age, profile_pic):
         self.email = email
         self.password = bcrypt.generate_password_hash(password, app.config.get('BCRYPT_LOG_ROUNDS')) \
             .decode('utf-8')
@@ -28,6 +31,9 @@ class User(db.Model):
         self.last_name = last_name
         self.username = username
         self.registered_on = datetime.datetime.now()
+        self.age = age
+        self.gender = gender
+        self.profile_pic = profile_pic
         self.id = uuid.uuid4().__str__()
 
     def save(self):
@@ -422,44 +428,6 @@ class Challenge(db.Model):
             steps += int(item.steps_no)
         return steps
 
-"""
-class Notification(db.Model):
-    __tablename__ = 'notifications'
-
-    id = db.Column(db.String, primary_key=True)
-    user_id = db.Column(db.String, db.ForeignKey('users.id'))
-    message = db.Column(db.String, nullable=False)
-    create_at = db.Column(db.DateTime, nullable=False)
-    community_invitee = db.Column(db.String, nullable=True)
-    post_id = db.Column(db.String, db.ForeignKey('posts.id'), nullable=True)
-    is_post_related = db.Column(db.String, nullable=False)
-    is_community_request = db.Column(db.String, nullable=False)
-    community_request_answered = db.Column(db.String, nullable=False)
-
-    def __init__(self, user_id, message=None, community_invitee=None,
-                 post_id=None, is_post_related="False", is_community_request="False"):
-        self.id = uuid.uuid4().__str__()
-        self.user_id = user_id
-        self.create_at = datetime.datetime.now()
-        self.message = message
-        self.is_post_related = is_post_related
-        self.is_community_request = is_community_request
-        if community_invitee:
-            self.community_invitee = community_invitee
-        if post_id:
-            self.post_id = post_id
-        self.community_request_answered = "False"
-
-    def save(self):
-
-        db.session.add(self)
-        db.session.commit()
-
-    @staticmethod
-    def get_notifications(user_id):
-        return Notification.query.filter(
-            and_(Notification.user_id == user_id, Notification.is_deleted == "False")).all()"""
-
 
 class UserSetting(db.Model):
     __tablename__ = "usersetting"
@@ -557,7 +525,7 @@ class UserSetting(db.Model):
         return average_calorie
 
 
-class Recommendation(db.Model):
+class Meal_table(db.Model):
     __tablename__ = "mealtable"
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     name_of_food = db.Column(db.String(255), nullable=False)
