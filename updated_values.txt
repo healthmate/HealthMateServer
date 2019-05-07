@@ -1,0 +1,35 @@
+Sugar bread and egg stew|580|False|True|False|True
+Sugar bread and fried egg|270|False|True|False|True
+Sugar Bread with boiled egg|258|False|True|False|True
+Sugar bread with Poached egg|252|False|True|False|True
+Plain Rice and egg stew with chicken wings(fried)|721|False|True|True|True
+Plain Rice and egg stew with Meat 100g(fried)|893|False|True|True|True
+Vegetable rice with chicken wings|338|False|True|True|True
+Chicken fried rice|355|False|True|True|True
+Chicken fried rice with chicken wings|436|False|True|True|True
+Fried Yam with shito|513|False|True|True|True
+Fried Yam,shito and chicken wings| 594|False|True|True|True
+Fried yam and egg sauce|818|False|True|True|True
+Fried Yam, egg sauce and Chicken Wings|899|False|True|True|True
+Sugar bread, egg stew and Milo|640|False|True|False|True
+Shrimp Fried Rice|445|False|True|True|True
+Banku, pepper and tilapia|529|False|False|True|True
+Banku, okro stew and meat|865|False|False|True|True
+Banku and groundnut soup|565|False|False|True|True
+Fufu and Light Soup|736|False|False|True|True
+Fufu and Egusi Soup|998|False|False|True|True
+Jollof Rice and Fried Chicken Leg|550|False|True|True|True
+Jollof Rice and Fried Fish|360|False|True|True|True
+Plain Rice and egg stew with Fish 100g(fried)|740|False|True|True|True
+Vegetable rice with fish|357|False|True|True|True
+Fried Yam with shito and Fish|613|False|True|True|True
+Fried Yam with Egg sauce and Fish|918|False|True|True|True
+Garri and Egusi Soup|832|False|False|True|True
+Garri and Okro Stew|618|False|False|True|True
+Garri and Light Soup|570|False|False|True|True
+Kontomire with agushie|218|False|False|True|True
+Waakye and Chicken wings|470|False|True|True|True
+Waakye and Fish|490|False|True|True|True
+Garri and Okro Stew with Boiled Meat|761|False|False|True|True
+Garri and Egusi Soup with Boiled Meat|975|False|False|True|True
+Plain Rice and Egg stew|640|False|True|True|True
