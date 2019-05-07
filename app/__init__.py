@@ -26,24 +26,6 @@ app.register_blueprint(routes)
 from app.docs.views import docs
 
 app.register_blueprint(docs)
-"""
-# Import the application views
-from app import views
 
-# Register blue prints
-from app.auth.views import auth
-
-app.register_blueprint(auth)
-
-from app.bucket.views import bucket
-
-app.register_blueprint(bucket)
-
-from app.bucketitems.views import bucketitems
-
-app.register_blueprint(bucketitems)
-
-
-"""
 
 # postgres://postgres:Ikechuckwu37@localhost/community

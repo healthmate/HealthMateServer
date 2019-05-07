@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, Blueprint
 from app.model import User, Post, Community, Comments, Likes, Steps, Challenge, UserSetting
 import re
 import datetime
-from app.helper import response, response_auth, token_required
+from app.helper import response, response_auth, response_login, token_required
 from app import bcrypt
 
 # app = Flask(__name__)
@@ -47,8 +47,12 @@ def login():
     if re.match(r"[^@]+@[^@]+\.[^@]+", email) and len(password) > 4:
         user = User.query.filter_by(email=email).first()
         if user and bcrypt.check_password_hash(user.password, password):
-            return response_auth(User.getusername(user.id), 'Successfully logged In', user.encode_auth_token(user.id),
-                                 200)
+            data = {
+                'username': user.username,
+                'fullname': user.first_name + " " + user.last_name
+            }
+            return response_login(data, 'Successfully logged In', user.encode_auth_token(user.id),
+                                  200)
         return response('failed', 'User does not exist or password is incorrect', 401)
     return response('failed', 'Missing or wrong email format or password is less than four characters', 401)
 
@@ -99,13 +103,14 @@ def getuserprofileid(current_user, userid):
             isFollowing = True
     count = Community.get_community_count(userid)
     post_count = Post.get_post_count(userid)
-
+    user = User.get_by_id(userid)
     data = {
         'user_id': userid,
         'username': User.getusername(userid),
         'community': count,
         'posts': post_count,
-        'isFollowing': isFollowing
+        'isFollowing': isFollowing,
+        'full_name': user.first_name + " " + user.last_name
     }
 
     return jsonify(data), 200
@@ -155,15 +160,15 @@ def post(current_user):
 
     post_item = Post(description, image_url, userid)
     post_id = post_item.save()
-
+    temp = description.lower()
     data = {}
-    for word in description.split():
+    for word in temp.split():
         if word.startswith("#"):
             if "challenge" in word:
                 data['challenge'] = word[1:]
-            if "d" in word:
+            elif word[1:].startswith("d"):
                 data['date'] = word[2:]
-            if "g" in word:
+            elif word[1:].startswith("g"):
                 data['goal'] = word[2:]
 
     required = ['challenge', 'date', 'goal']
@@ -368,8 +373,10 @@ def comment(current_user):
                   'current_date': datetime.datetime.now().date(),
                   'end_date': challenge.end_date
                   }
-        Challenge.join_challenge(fields)
-
+        if not Challenge.check_user_joined(current_user.id, values.get('post_id')):
+            Challenge.join_challenge(fields)
+        else:
+            return response('failed', 'already joined', 400)
     return response('success', 'Commented successfully', 200)
 
 
@@ -384,20 +391,6 @@ def getcomment(post_id):
             'username': User.getusername(c.user_id),
             'create_at': c.create_at
         })
-    return jsonify(comments), 200
-
-
-@routes.route('/getcommentee', methods=['POST'])
-def get_commenteee():
-    comments = []
-    commentobj = Comments.getcomments(post_id=1)
-    for c in commentobj:
-        comments.append({
-            'comment': c.comment,
-            'user_id': c.user_id,
-            'create_at': c.create_at
-        })
-
     return jsonify(comments), 200
 
 
@@ -428,6 +421,11 @@ def store_steps(current_user, steps):
     step = Steps(user_id=current_user.id, steps_no=steps)
     if not Steps.update_if_instance_exist(datetime.datetime.now().date(), current_user.id, steps):
         step.save()
+    """challenges = Challenge.get_challenge_within_date_by_user_id(current_user.id, datetime.datetime.now())
+    if challenges:
+        for challenge in challenges:
+            Challenge.update_challenge_steps(challenge.id, steps)"""
+
     return response('success', 'Steps added successfully', 200)
 
 
@@ -447,41 +445,37 @@ def get_steps(current_user, limit):
 @routes.route('/challenge/getchallenges', methods=['GET'])
 @token_required
 def get_all_challenges(current_user):
-    challenges = Challenge.get_challenge_by_user_id(current_user.id)
+    # challenges = Challenge.get_challenge_by_user_id(current_user.id)
+    challenges = Challenge.get_challenge_within_date_by_user_id(current_user.id, datetime.datetime.now())
     resp = []
     for challenge in challenges:
         user = Challenge.get_creator(challenge.id)
-        username = User.getusername(user.id)
+        username = User.getusername(user.user_id)
+        my_format = "%Y-%m-%d %H:%M:%S"
+        start_date = datetime.datetime.strptime(str(challenge.start_date), my_format).date()
+        new_date = datetime.datetime.strptime(str(challenge.end_date), my_format).date()
+        users = Challenge.get_users_performance(challenge.post_id)
+        challenge_users = []
+        for user in users:
+            user_name = User.getusername(user.user_id)
+            challenge_users.append({
+                'username': user_name,
+                'steps': Challenge.get_user_steps_by_challenge(datetime.datetime.now().date(),
+                                                               start_date, user.user_id),
+                'role': user.role
+            })
         resp.append({
-            'steps': challenge.steps,
+            'steps': Challenge.get_user_steps_by_challenge(datetime.datetime.now().date(), start_date, current_user.id),
             'start_date': challenge.start_date,
             'goal': challenge.goal,
             'role': challenge.role,
             'challenge_name': challenge.challenge_name,
             'challenge_description': challenge.challenge_description,
-            'end_date': challenge.end_date,
-            'creator': username
-        })
-    return jsonify(resp), 200
-
-
-# challenge
-@routes.route('/challenge/<challenge_id>', methods=['GET'])
-@token_required
-def get_challenge(current_user, challenge_id):
-    users = Challenge.get_users_performance(challenge_id)
-    resp = []
-    for user in users:
-        user_name = User.getusername(user.id)
-        resp.append({
-            'username': user_name,
-            'steps': user.steps,
-            'start_date': user.start_date,
-            'goal': user.goal,
-            'role': user.role,
-            'challenge_name': user.challenge_name,
-            'challenge_description': user.challenge_description,
-            'end_date': user.end_date
+            'end_date': str(new_date),
+            'creator': username,
+            'image_url': Post.get_post_image_url(challenge.post_id),
+            'challenge_id': challenge.id,
+            'users': challenge_users
         })
     return jsonify(resp), 200
 
@@ -490,32 +484,26 @@ def get_challenge(current_user, challenge_id):
 @token_required
 def save_notification(current_user):
     values = request.get_json()
-    required = ['user_id', 'message']
+    required = ['message']
     if not all(k in values for k in required):
         return 'Missing values', 400
-    user_id = current_user.id
-    is_deleted = values.get("is_deleted")
+    user_id = values.get("user_id")
     message = values.get("message")
-    is_challenge = "False"
     is_post_related = "False"
     is_community_request = "False"
-    community_invitee = "False"
-    challenge_id = None
+    community_invitee = None
     post_id = None
 
-    if values.get("is_challenge"):
-        is_challenge = values.get("is_challenge")
     if values.get("is_post_related"):
         is_post_related = values.get("is_post_related")
     if values.get("is_community_request"):
         is_community_request = values.get("is_community_request")
     if values.get("community_invitee"):
-        community_invitee = values.get("community_invitee")
-    if values.get("challenge_id"):
-        challenge_id = values.get("challenge_id")
+        community_invitee = current_user.id
     if values.get("post_id"):
         post_id = values.get("post_id")
 
+<<<<<<< HEAD
     notification = Notification(user_id=user_id, is_deleted=is_deleted, message=message, is_challenge=is_challenge,
                                 is_post_related=is_post_related, is_community_request=is_community_request,
                                 community_invitee=community_invitee, challenge_id=challenge_id, post_id=post_id)
@@ -550,3 +538,48 @@ def update_user_settings(current_user):
 #         'net_calorie_goal': setting.net_calorie,
 #         ''
 #     }
+=======
+    notification = Notification(user_id=user_id, message=message,
+                                is_post_related=is_post_related,
+                                community_invitee=community_invitee, post_id=post_id,
+                                is_community_request=is_community_request)
+    notification.save()
+    return response('success', 'notification sent successfully', 200)
+
+
+@routes.route('/notification/get', methods=['GET'])
+@token_required
+def get_notification(current_user):
+    notifications = Notification.get_notifications(current_user.id)
+    response = []
+    for notification in notifications:
+        response.append({
+            "id": notification.id,
+            "user_id": notification.user_id,
+            "create_at": notification.create_at,
+            "message": notification.message,
+            "is_post_related": notification.is_post_related,
+            "is_community_request": notification.is_community_request,
+            "community_invitee": notification.community_invitee,
+            "post_id": notification.post_id
+        })
+    return jsonify(response), 200
+
+
+@routes.route('/notification/update', methods=['POST'])
+@token_required
+def update_community_request(current_user):
+    values = request.get_json()
+    required = ['community_id', 'is_accepted', 'notification_id']
+    if not all(k in values for k in required):
+        return 'Missing values', 400
+    is_accepted = values.get("is_accepted")
+    if is_accepted == "True" and not Community.already_community(community_id=current_user.id,
+                                                                 user_id=values.get("community_id")):
+        community = Community(community_id=values.get("community_id"), user_id=current_user.id)
+        community.save()
+        community = Community(community_id=current_user.id, user_id=values.get("community_id"))
+        community.save()
+    Notification.request_answered(values.get("notification_id"))
+"""
+>>>>>>> e5306be1899b77d220cfe9c83f2c0ebe765e5cef

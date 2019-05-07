@@ -76,3 +76,19 @@ def response_auth(status, message, token, status_code):
         'message': message,
         'auth_token': token.decode("utf-8")
     })), status_code
+
+
+def response_login(data: dict, message, token, status_code):
+    """
+
+    :param data:
+    :param message:
+    :param token:
+    :param status_code:
+    :return:
+    """
+    return make_response(jsonify({
+        'data': data,
+        'message': message,
+        'auth_token': token.decode("utf-8")
+    })), status_code

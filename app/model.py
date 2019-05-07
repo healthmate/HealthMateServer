@@ -166,6 +166,11 @@ class Post(db.Model):
             post_count = post_count + 1
         return post_count
 
+    @staticmethod
+    def get_post_image_url(post_id):
+        post = Post.query.filter_by(id=post_id).first()
+        return post.image_url
+
 
 class Comments(db.Model):
     __tablename__ = 'comments'
@@ -254,6 +259,12 @@ class Community(db.Model):
             community_count = community_count + 1
         return community_count
 
+    @staticmethod
+    def already_community(community_id, user_id):
+        instance = Community.query.filter(
+            and_(Community.user_id == user_id, Community.community_id == community_id)).first()
+        return instance
+
 
 class Steps(db.Model):
     """
@@ -293,7 +304,7 @@ class Steps(db.Model):
 
     @staticmethod
     def get_steps(user_id, limit):
-        return Steps.query.filter_by(user_id=user_id).limit(limit)
+        return Steps.query.filter_by(user_id=user_id).order_by(Steps.date.desc()).limit(limit)
 
 
 class Challenge(db.Model):
@@ -359,11 +370,11 @@ class Challenge(db.Model):
             steps += item.steps_no
         Challenge(user_id=user_id, post_id=post_id, goal=goal, challenge_name=challenge_name,
                   challenge_description=challenge_description,
-                  end_date=end_date, steps=steps, role="member", start_date=start_date).save()
+                  end_date=end_date, steps=steps, role="challenger", start_date=start_date).save()
 
     @staticmethod
-    def get_users_performance(challenge_id):
-        return Challenge.query.filter_by(id=challenge_id).order_by(Challenge.steps.desc()).all()
+    def get_users_performance(post_id):
+        return Challenge.query.filter(Challenge.post_id == post_id).order_by(Challenge.steps.desc()).all()
 
     @staticmethod
     def get_challenge_by_user_id(user_id):
@@ -372,7 +383,7 @@ class Challenge(db.Model):
     @staticmethod
     def get_creator(challenge_id):
         return Challenge.query.filter(
-            and_(Challenge.challenge_id == challenge_id, Challenge.role == "creator")).first()
+            and_(Challenge.id == challenge_id, Challenge.role == "creator")).first()
 
     @staticmethod
     def check_postid(post_id):
@@ -383,44 +394,64 @@ class Challenge(db.Model):
         check_username = message[1:]
         return True if '@' in message and check_username == username else False
 
+    @staticmethod
+    def get_all():
+        return Challenge.query.order_by(Challenge.steps.desc()).all()
 
-"""class Notification(db.Model):
+    @staticmethod
+    def check_user_joined(user_id, post_id):
+        return Challenge.query.filter(
+            and_(Challenge.user_id == user_id, Challenge.post_id == post_id)).first()
+
+    @staticmethod
+    def get_challenge_within_date_by_user_id(user_id, date_now):
+        return Challenge.query.filter(and_(Challenge.end_date >= date_now, Challenge.user_id == user_id)).all()
+
+    @staticmethod
+    def update_challenge_steps(challenge_id, steps):
+        instance = Challenge.query.filter_by(id=challenge_id).first()
+        instance.steps = int(instance.steps) + int(steps)
+        db.session.commit()
+
+    @staticmethod
+    def get_user_steps_by_challenge(current_date, start_date, user_id):
+        record = Steps.query.filter(and_(Steps.date <= current_date, Steps.date >= start_date,
+                                         Steps.user_id == user_id))
+        steps = 0
+        for item in record:
+            steps += int(item.steps_no)
+        return steps
+
+"""
+class Notification(db.Model):
     __tablename__ = 'notifications'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    is_deleted = db.Column(db.String, nullable=False)
+    id = db.Column(db.String, primary_key=True)
+    user_id = db.Column(db.String, db.ForeignKey('users.id'))
     message = db.Column(db.String, nullable=False)
     create_at = db.Column(db.DateTime, nullable=False)
-    community_invitee = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
-    challenge_id = db.Column(db.Integer, db.ForeignKey('challenge.id'), nullable=True)
-    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=True)
-    is_challenge = db.Column(db.String, nullable=False)
+    community_invitee = db.Column(db.String, nullable=True)
+    post_id = db.Column(db.String, db.ForeignKey('posts.id'), nullable=True)
     is_post_related = db.Column(db.String, nullable=False)
     is_community_request = db.Column(db.String, nullable=False)
+    community_request_answered = db.Column(db.String, nullable=False)
 
-    def __init__(self, user_id, is_deleted="False", message=None, community_invitee=None, challenge_id=None,
-                 post_id=None, is_challenge="False", is_post_related="False", is_community_request="False"):
+    def __init__(self, user_id, message=None, community_invitee=None,
+                 post_id=None, is_post_related="False", is_community_request="False"):
+        self.id = uuid.uuid4().__str__()
         self.user_id = user_id
-        self.is_deleted = is_deleted
         self.create_at = datetime.datetime.now()
         self.message = message
-        self.is_challenge = is_challenge
         self.is_post_related = is_post_related
         self.is_community_request = is_community_request
         if community_invitee:
             self.community_invitee = community_invitee
-        if challenge_id:
-            self.challenge_id = challenge_id
         if post_id:
             self.post_id = post_id
+        self.community_request_answered = "False"
 
     def save(self):
-        
-        Persist the steps in the database
-        :param notifications:
-        :return:
-        
+
         db.session.add(self)
         db.session.commit()
 

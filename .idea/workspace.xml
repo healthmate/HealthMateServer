@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+<<<<<<< HEAD
+    <list default="true" id="3d7bd3cf-2e06-4e8f-83db-63ffa15b143e" name="Default Changelist" comment="" />
+=======
     <list default="true" id="3d7bd3cf-2e06-4e8f-83db-63ffa15b143e" name="Default Changelist" comment="">
 <<<<<<< HEAD
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/Server.iml" afterPath="$PROJECT_DIR$/.idea/Server.iml" />
@@ -21,6 +24,7 @@
       <change beforePath="$PROJECT_DIR$/migrations/versions/ed808d73d313_.py" beforeDir="false" />
 >>>>>>> 6e3c4b7dbbbc7b0f55e607bee4cbe063c693cfab
     </list>
+>>>>>>> b5a8ee2f94ff5efdfde8e93fd81ccb718e875c56
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -36,7 +40,7 @@
     <session id="-1843730712">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="16" />
+          <entry key="project.closed" value="20" />
           <entry key="project.open.time.1" value="1" />
           <entry key="project.open.time.10" value="3" />
           <entry key="project.open.time.11" value="2" />
@@ -44,44 +48,48 @@
           <entry key="project.open.time.13" value="1" />
           <entry key="project.open.time.14" value="1" />
           <entry key="project.open.time.19" value="1" />
-          <entry key="project.open.time.2" value="1" />
+          <entry key="project.open.time.2" value="2" />
           <entry key="project.open.time.26" value="1" />
           <entry key="project.open.time.5" value="1" />
+          <entry key="project.open.time.6" value="3" />
           <entry key="project.open.time.9" value="1" />
-          <entry key="project.opened" value="18" />
+          <entry key="project.opened" value="22" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="ini" value="3" />
           <entry key="mako" value="2" />
-          <entry key="py" value="45" />
+          <entry key="py" value="49" />
           <entry key="txt" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="PLAIN_TEXT" value="6" />
-          <entry key="Python" value="45" />
+          <entry key="Python" value="49" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="Python Console" value="905" />
-          <entry key="py" value="12200" />
+          <entry key="Python Console" value="1370" />
+          <entry key="py" value="14999" />
           <entry key="txt" value="21" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="21" />
-          <entry key="Python" value="13105" />
+          <entry key="Python" value="16369" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+<<<<<<< HEAD
+      <file pinned="false" current-in-tab="true">
+=======
 <<<<<<< HEAD
       <file leaf-file-name="manage.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/manage.py">
@@ -104,12 +112,21 @@
                 <element signature="e#0#31#0" expanded="true" />
 =======
       <file pinned="false" current-in-tab="false">
+>>>>>>> b5a8ee2f94ff5efdfde8e93fd81ccb718e875c56
         <entry file="file://$PROJECT_DIR$/app/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1785">
-              <caret line="119" column="25" selection-start-line="119" selection-start-column="25" selection-end-line="119" selection-end-column="25" />
+            <state relative-caret-position="-4860">
+              <caret line="115" lean-forward="true" selection-start-line="115" selection-end-line="115" />
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
+<<<<<<< HEAD
+                <marker date="1555956199949" expanded="true" signature="4577:4701" ph="..." />
+                <marker date="1555956199949" expanded="true" signature="6060:6970" ph="..." />
+                <marker date="1555956199949" expanded="true" signature="7975:7978" ph="..." />
+                <marker date="1555956199949" expanded="true" signature="8756:9017" ph="..." />
+                <marker date="1555956199949" expanded="true" signature="10642:10651" ph="..." />
+                <marker date="1555956199949" expanded="true" signature="10642:11907" ph="..." />
+=======
                 <element signature="e#7314#8422#0" />
                 <marker date="1555067817442" expanded="true" signature="4484:4608" ph="..." />
                 <marker date="1555067817442" expanded="true" signature="5825:6735" ph="..." />
@@ -118,6 +135,7 @@
                 <marker date="1555067817442" expanded="true" signature="10175:11436" ph="..." />
                 <marker date="1555067817442" expanded="true" signature="12231:12992" ph="..." />
 >>>>>>> 6e3c4b7dbbbc7b0f55e607bee4cbe063c693cfab
+>>>>>>> b5a8ee2f94ff5efdfde8e93fd81ccb718e875c56
               </folding>
             </state>
           </provider>
@@ -126,6 +144,21 @@
       <file leaf-file-name="routes.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/routes.py">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
+            <state relative-caret-position="15">
+              <caret line="1" column="78" lean-forward="true" selection-start-line="1" selection-start-column="78" selection-end-line="1" selection-end-column="78" />
+              <folding>
+                <element signature="e#6195#6998#0" />
+                <element signature="e#7089#7884#0" />
+                <element signature="e#7978#9624#0" />
+                <marker date="1555956221944" expanded="true" signature="3083:4144" ph="..." />
+                <marker date="1555956221944" expanded="true" signature="12437:12440" ph="..." />
+                <marker date="1555956221944" expanded="true" signature="13134:13607" ph="..." />
+                <marker date="1555956221944" expanded="true" signature="13710:13715" ph="..." />
+                <marker date="1555956221944" expanded="true" signature="15297:15300" ph="..." />
+                <marker date="1555956221944" expanded="true" signature="15409:15410" ph="..." />
+                <marker date="1555956221944" expanded="true" signature="17317:17318" ph="..." />
+=======
 <<<<<<< HEAD
             <state relative-caret-position="7004">
               <caret line="417" column="41" lean-forward="false" selection-start-line="417" selection-start-column="41" selection-end-line="417" selection-end-column="41" />
@@ -143,11 +176,17 @@
                 <marker date="1555067287771" expanded="true" signature="14621:15155" ph="..." />
                 <marker date="1555067287771" expanded="true" signature="15264:15265" ph="..." />
 >>>>>>> 6e3c4b7dbbbc7b0f55e607bee4cbe063c693cfab
+>>>>>>> b5a8ee2f94ff5efdfde8e93fd81ccb718e875c56
               </folding>
             </state>
           </provider>
         </entry>
       </file>
+<<<<<<< HEAD
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/run.py">
+          <provider selected="true" editor-type-id="text-editor" />
+=======
 <<<<<<< HEAD
       <file leaf-file-name="requirements.txt" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/requirements.txt">
@@ -186,6 +225,7 @@
 >>>>>>> 6e3c4b7dbbbc7b0f55e607bee4cbe063c693cfab
             </state>
           </provider>
+>>>>>>> b5a8ee2f94ff5efdfde8e93fd81ccb718e875c56
         </entry>
       </file>
     </leaf>
@@ -197,6 +237,7 @@
       <find>id</find>
       <find>int</find>
       <find>INTEGER</find>
+      <find>getusername</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -208,9 +249,10 @@
         <option value="$PROJECT_DIR$/manage.py" />
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/migrations/env.py" />
-        <option value="$PROJECT_DIR$/app/routes.py" />
-        <option value="$PROJECT_DIR$/app/model.py" />
         <option value="$PROJECT_DIR$/app/config.py" />
+        <option value="$PROJECT_DIR$/app/__init__.py" />
+        <option value="$PROJECT_DIR$/app/model.py" />
+        <option value="$PROJECT_DIR$/app/routes.py" />
       </list>
     </option>
   </component>
@@ -244,6 +286,17 @@
               <item name="Server" type="b2602c69:ProjectViewProjectNode" />
               <item name="Server" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Server" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Server" type="462c0819:PsiDirectoryNode" />
+              <item name="migrations" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Server" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Server" type="462c0819:PsiDirectoryNode" />
+              <item name="migrations" type="462c0819:PsiDirectoryNode" />
+              <item name="versions" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -325,10 +378,41 @@
     </task>
     <servers />
   </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="false" />
     <layout>
+<<<<<<< HEAD
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24947146" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info id="DB Browser" order="3" weight="0.32980973" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32891566" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32891566" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="DB Execution Console" order="8" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="9" visible="true" weight="0.32891566" />
+      <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="11" weight="0.32891566" />
+      <window_info anchor="bottom" id="Messages" order="12" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+=======
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
@@ -347,6 +431,7 @@
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+>>>>>>> b5a8ee2f94ff5efdfde8e93fd81ccb718e875c56
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -442,13 +527,7 @@
           </folding>
 =======
     <entry file="file://$PROJECT_DIR$/migrations/versions/3067bfcdf75f_.py" />
-    <entry file="file://$PROJECT_DIR$/migrations/versions/b81839d5039d_.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="15" column="9" selection-start-line="15" selection-start-column="9" selection-end-line="15" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/migrations/versions/b81839d5039d_.py" />
     <entry file="file://$PROJECT_DIR$/app/helper.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="720">
@@ -463,6 +542,11 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/migrations/versions/ed808d73d313_.py" />
+    <entry file="file://$PROJECT_DIR$/migrations/versions/e44e3f5e3bf7_.py" />
+    <entry file="file://$PROJECT_DIR$/migrations/versions/5227e3795950_.py" />
+=======
     <entry file="file://$PROJECT_DIR$/run.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -491,6 +575,7 @@
         </state>
       </provider>
     </entry>
+>>>>>>> b5a8ee2f94ff5efdfde8e93fd81ccb718e875c56
     <entry file="file:///Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/site-packages/flask/blueprints.py">
       <provider selected="true" editor-type-id="text-editor">
 <<<<<<< HEAD
@@ -541,6 +626,8 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
+=======
     <entry file="file://$PROJECT_DIR$/app/routes.py">
       <provider selected="true" editor-type-id="text-editor">
 <<<<<<< HEAD
@@ -564,6 +651,7 @@
         </state>
       </provider>
     </entry>
+>>>>>>> b5a8ee2f94ff5efdfde8e93fd81ccb718e875c56
     <entry file="file://$PROJECT_DIR$/migrations/alembic.ini">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-233" />
@@ -572,21 +660,11 @@
     <entry file="file://$PROJECT_DIR$/migrations/script.py.mako">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/migrations/versions/6ff3308e417e_.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/migrations/versions/10b5ec0e8835_.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/migrations/versions/211bbf463134_.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/migrations/versions/a6ab6feb19b2_.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/migrations/versions/bb0731d6ee57_.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/migrations/versions/6ff3308e417e_.py" />
+    <entry file="file://$PROJECT_DIR$/migrations/versions/10b5ec0e8835_.py" />
+    <entry file="file://$PROJECT_DIR$/migrations/versions/211bbf463134_.py" />
+    <entry file="file://$PROJECT_DIR$/migrations/versions/a6ab6feb19b2_.py" />
+    <entry file="file://$PROJECT_DIR$/migrations/versions/bb0731d6ee57_.py" />
     <entry file="file://$PROJECT_DIR$/migrations/env.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="576">
@@ -594,11 +672,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/migrations/versions/46661089ebae_.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-495" />
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/migrations/versions/46661089ebae_.py" />
     <entry file="file://$PROJECT_DIR$/manage.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-95">
@@ -606,8 +680,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/model.py">
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/datetime.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
+        <state relative-caret-position="251">
+          <caret line="1627" column="8" selection-start-line="1627" selection-start-column="8" selection-end-line="1627" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/run.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="28" selection-start-line="28" selection-end-line="28" />
+=======
 <<<<<<< HEAD
         <state relative-caret-position="7004">
           <caret line="417" column="41" lean-forward="false" selection-start-line="417" selection-start-column="41" selection-end-line="417" selection-end-column="41" />
@@ -627,8 +715,12 @@
             <marker date="1555067817442" expanded="true" signature="12231:12992" ph="..." />
 >>>>>>> 6e3c4b7dbbbc7b0f55e607bee4cbe063c693cfab
           </folding>
+>>>>>>> b5a8ee2f94ff5efdfde8e93fd81ccb718e875c56
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/migrations/versions/9e1fd01925bd_.py">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/app/config.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -638,8 +730,47 @@
           <folding />
 =======
         <state relative-caret-position="60">
+<<<<<<< HEAD
+          <caret line="4" column="20" selection-start-line="4" selection-start-column="20" selection-end-line="4" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/routes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1" column="78" lean-forward="true" selection-start-line="1" selection-start-column="78" selection-end-line="1" selection-end-column="78" />
+          <folding>
+            <element signature="e#6195#6998#0" />
+            <element signature="e#7089#7884#0" />
+            <element signature="e#7978#9624#0" />
+            <marker date="1555956221944" expanded="true" signature="3083:4144" ph="..." />
+            <marker date="1555956221944" expanded="true" signature="12437:12440" ph="..." />
+            <marker date="1555956221944" expanded="true" signature="13134:13607" ph="..." />
+            <marker date="1555956221944" expanded="true" signature="13710:13715" ph="..." />
+            <marker date="1555956221944" expanded="true" signature="15297:15300" ph="..." />
+            <marker date="1555956221944" expanded="true" signature="15409:15410" ph="..." />
+            <marker date="1555956221944" expanded="true" signature="17317:17318" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4860">
+          <caret line="115" lean-forward="true" selection-start-line="115" selection-end-line="115" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+            <marker date="1555956199949" expanded="true" signature="4577:4701" ph="..." />
+            <marker date="1555956199949" expanded="true" signature="6060:6970" ph="..." />
+            <marker date="1555956199949" expanded="true" signature="7975:7978" ph="..." />
+            <marker date="1555956199949" expanded="true" signature="8756:9017" ph="..." />
+            <marker date="1555956199949" expanded="true" signature="10642:10651" ph="..." />
+            <marker date="1555956199949" expanded="true" signature="10642:11907" ph="..." />
+          </folding>
+=======
           <caret line="4" column="30" selection-start-line="4" selection-start-column="30" selection-end-line="4" selection-end-column="30" />
 >>>>>>> 6e3c4b7dbbbc7b0f55e607bee4cbe063c693cfab
+>>>>>>> b5a8ee2f94ff5efdfde8e93fd81ccb718e875c56
         </state>
       </provider>
     </entry>
