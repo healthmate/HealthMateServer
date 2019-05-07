@@ -422,6 +422,7 @@ class Challenge(db.Model):
             steps += int(item.steps_no)
         return steps
 
+
 """
 class Notification(db.Model):
     __tablename__ = 'notifications'
@@ -467,7 +468,7 @@ class UserSetting(db.Model):
     average_weight = db.Column(db.String, nullable=False)
     height = db.Column(db.String, nullable=False)
     goal_weight = db.Column(db.String(255), nullable=False)
-    weekly_goal = db.Column(db.String(255), nullable=False)
+    duration = db.Column(db.Integer, nullable=False)
     net_calorie_goal = db.Column(db.String, nullable=False)
     is_diabetic = db.Column(db.String, nullable=False)
     activity_level = db.Column(db.String, nullable=False)
@@ -499,10 +500,13 @@ class UserSetting(db.Model):
             instance.is_diabetic = is_diabetic
             instance.height = height
             instance.activity_level = activity_level
+            instance.duration = goal_weight - average_weight
+            instance.net_calorie_goal = UserSetting.get_net_calorie(user_id,goal_weight,average_weight)
 
             db.session.commit()
             return True
         return False
+
 
     @staticmethod
     def centimetertoinches(user_id):
@@ -536,25 +540,68 @@ class UserSetting(db.Model):
 
     @staticmethod
     def calorie_needs(user_id):
-        total_bmr = UserSetting.calculate_bmr(user_id)
+        required_bmr = UserSetting.calculate_bmr(user_id)
         user_setting = UserSetting.query.filter_by(id=user_id).first()
         activity_level = user_setting.actvity_level
 
         if activity_level == "Low":
-            return total_bmr * 1.2
+            total_bmr = required_bmr * 1.2
+            return total_bmr
+
         elif activity_level == "Lightly active":
-            return total_bmr * 1.375
+            total_bmr = required_bmr * 1.375
+            return total_bmr
+
         elif activity_level == "moderately active":
-            return total_bmr * 1.55
+            total_bmr = required_bmr * 1.55
+            return total_bmr
+
         elif activity_level == "very active":
-            return total_bmr * 1.725
+            total_bmr = required_bmr * 1.725
+            return total_bmr
         else:
-            return total_bmr * 1.9
+            total_bmr = required_bmr * 1.9
+            return total_bmr
 
     @staticmethod
-    def average_calorie(user_id):
+    #Net calorie/daily calorie goal Implementation
+    def get_net_calorie(user_id, goal_weight, average_weight):
         average_calorie = UserSetting.calorie_needs(user_id)
-        return average_calorie
+        #user_setting = UserSetting.query.filter_by(id=user_id).first()
+        #goal_weight = goal_weight
+        #average_weight = average_weight
+        if goal_weight == average_weight:
+            goal_calorie = average_calorie
+            return goal_calorie
+
+        elif goal_weight > average_weight:
+            required_calorie = UserSetting.gainbyakg(user_id)
+            goal_calorie = average_calorie + required_calorie/7
+            return goal_calorie
+
+        else:
+            required_calorie = UserSetting.losebyakg(user_id)
+            goal_calorie = average_calorie - required_calorie/7
+            return goal_calorie
+
+
+    @staticmethod
+    def gainbyakg(user_id):
+        user_setting = UserSetting.query.filter_by(id=user_id).first()
+        goal_weight = user_setting.goal_weight
+        average_weight = user_setting.average_weight
+        weight_gain = goal_weight - average_weight
+        calorie_required = weight_gain * 7700
+        return calorie_required
+
+    @staticmethod
+    def losebyakg(user_id):
+        user_setting = UserSetting.query.filter_by(id=user_id).first()
+        goal_weight = user_setting.goal_weight
+        average_weight = user_setting.average_weight
+        weight_loss = average_weight - goal_weight
+        calorie_required = weight_loss * 7700
+        return calorie_required
 
 
 class Recommendation(db.Model):
