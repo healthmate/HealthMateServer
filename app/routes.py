@@ -399,10 +399,10 @@ def getcomment(post_id):
     commentobj = Comments.getcomments(post_id=post_id)
 
     for c in commentobj:
-        user = User.get_profile_pic(c.user_id)
+        user = User.get_by_id(c.user_id)
         comments.append({
             'comment': c.comment,
-            'username': User.getusername(c.user_id),
+            'username': user.username,
             'create_at': c.create_at,
             'profile_pic': user.profile_pic
         })

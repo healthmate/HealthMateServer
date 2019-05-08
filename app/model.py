@@ -167,7 +167,7 @@ class Post(db.Model):
 
     @staticmethod
     def get_posts(user_id):
-        post = Post.query.filter_by(user_id=user_id).all()
+        post = Post.query.filter_by(user_id=user_id).order_by(Post.create_at.desc()).all()
         return post
 
     @staticmethod
