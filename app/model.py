@@ -457,7 +457,7 @@ class UserSetting(db.Model):
 
     def save(self):
         db.session.add(self)
-        db.Session.commit()
+        db.session.commit()
 
     @staticmethod
     def get_user_settings(user_id):
