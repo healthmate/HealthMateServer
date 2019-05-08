@@ -456,7 +456,7 @@ class UserSetting(db.Model):
         self.image_url = image_url"""
 
     def save(self):
-        db.Session.add(self)
+        db.session.add(self)
         db.Session.commit()
 
     @staticmethod
@@ -474,12 +474,11 @@ class UserSetting(db.Model):
             instance.height = height
             instance.activity_level = activity_level
             instance.duration = goal_weight - average_weight
-            instance.net_calorie_goal = UserSetting.get_net_calorie(user_id,goal_weight,average_weight)
+            instance.net_calorie_goal = UserSetting.get_net_calorie(user_id, goal_weight, average_weight)
 
             db.session.commit()
             return True
         return False
-
 
     @staticmethod
     def centimetertoinches(user_id):
@@ -540,23 +539,22 @@ class UserSetting(db.Model):
     @staticmethod
     def get_net_calorie(user_id, goal_weight, average_weight):
         average_calorie = UserSetting.calorie_needs(user_id)
-        #user_setting = UserSetting.query.filter_by(id=user_id).first()
-        #goal_weight = goal_weight
-        #average_weight = average_weight
+        # user_setting = UserSetting.query.filter_by(id=user_id).first()
+        # goal_weight = goal_weight
+        # average_weight = average_weight
         if goal_weight == average_weight:
             goal_calorie = average_calorie
             return goal_calorie
 
         elif goal_weight > average_weight:
             required_calorie = UserSetting.gainbyakg(user_id)
-            goal_calorie = average_calorie + required_calorie/7
+            goal_calorie = average_calorie + required_calorie / 7
             return goal_calorie
 
         else:
             required_calorie = UserSetting.losebyakg(user_id)
-            goal_calorie = average_calorie - required_calorie/7
+            goal_calorie = average_calorie - required_calorie / 7
             return goal_calorie
-
 
     @staticmethod
     def gainbyakg(user_id):
@@ -587,7 +585,7 @@ class Meal_table(db.Model):
     lunch = db.Column(db.String, nullable=False)
     dinner = db.Column(db.String, nullable=False)
 
-    #\copy mealtable FROM '/Users/coderiddles/Desktop/HealthMate/Server/updated_values.txt' with (format text,delimiter '|');
+    # \copy mealtable FROM '/Users/coderiddles/Desktop/HealthMate/Server/updated_values.txt' with (format text,delimiter '|');
 
     # def __init__(self, id, name_of_food, calories, is_diabetic, breakfast, lunch, dinner):
     #     self.id = id
