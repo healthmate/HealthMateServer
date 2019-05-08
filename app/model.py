@@ -122,6 +122,11 @@ class User(db.Model):
 
         return user.username
 
+    @staticmethod
+    def get_profile_pic(user_id):
+        user = User.query.filter_by(id=user_id).first()
+        return user.profile_pic
+
 
 class Post(db.Model):
     __tablename__ = 'posts'
@@ -581,6 +586,8 @@ class Meal_table(db.Model):
     breakfast = db.Column(db.String, nullable=False)
     lunch = db.Column(db.String, nullable=False)
     dinner = db.Column(db.String, nullable=False)
+
+    #\copy mealtable FROM '/Users/coderiddles/Desktop/HealthMate/Server/updated_values.txt' with (format text,delimiter '|');
 
     # def __init__(self, id, name_of_food, calories, is_diabetic, breakfast, lunch, dinner):
     #     self.id = id

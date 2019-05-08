@@ -13,7 +13,7 @@ routes = Blueprint('routes', __name__)
 @routes.route("/auth/register", methods=["POST"])
 def register():
     values = request.get_json()
-    required = ['username', 'last_name', 'first_name', 'password', 'email']
+    required = ['username', 'last_name', 'first_name', 'password', 'email', 'profile_pic', 'gender', 'age']
     if not all(k in values for k in required):
         return 'Missing values', 400
     email = values.get('email')
@@ -21,6 +21,9 @@ def register():
     last_name = values.get('last_name')
     first_name = values.get('first_name')
     password = values.get('password')
+    gender = values.get('gender')
+    age = values.get('age')
+    profile_pic = values.get("profile_pic")
 
     if re.match(r"[^@]+@[^@]+\.[^@]+", email) and len(password) > 4:
         user = User.get_by_email(email)
@@ -29,7 +32,7 @@ def register():
             return response('failed', 'Failed, username already exists', 202)
         if not user:
             token = User(email=email, password=password, first_name=first_name, last_name=last_name,
-                         username=username).save()
+                         username=username, gender=gender, age=age, profile_pic=profile_pic).save()
             return response_auth('success', 'Successfully registered', token, 201)
         else:
             return response('failed', 'Failed, User already exists, Please sign In', 202)
@@ -135,7 +138,8 @@ def search(current_user):
         data = {
             'user_id': user.id,
             'username': user.username,
-            'community': isFollowing
+            'community': isFollowing,
+            'profile_pic': user.profile_pic
         }
     else:
         return response('failed', 'User Does not exist', 401)
@@ -200,6 +204,7 @@ def getuserpostid(current_user):
 
         comments.clear()
         comment = Comments.getcomments(item.id)
+        user = User.get_by_id(item.user_id)
 
         for c in comment:
             comments.append({
@@ -214,7 +219,8 @@ def getuserpostid(current_user):
             'image_url': item.image_url,
             'create_at': item.create_at,
             'user_id': item.user_id,
-            'username': User.getusername(item.user_id),
+            'profile_pic': user.profile_pic,
+            'username': user.username,
             'likes': item.likes,
             'comments': comments
         })
@@ -235,6 +241,7 @@ def getuserpost(user_id):
 
         comments.clear()
         comment = Comments.getcomments(item.id)
+        user = User.get_by_id(item.user_id)
 
         for c in comment:
             comments.append({
@@ -249,7 +256,8 @@ def getuserpost(user_id):
             'image_url': item.image_url,
             'create_at': item.create_at,
             'user_id': item.user_id,
-            'username': User.getusername(item.user_id),
+            'profile_pic': user.profile_pic,
+            'username': user.username,
             'likes': item.likes,
             'comments': comments
         })
@@ -271,6 +279,7 @@ def getpost(current_user):
 
         comments.clear()
         comment = Comments.getcomments(item.id)
+        user = User.get_by_id(item.user_id)
 
         for c in comment:
             comments.append({
@@ -285,7 +294,8 @@ def getpost(current_user):
             'image_url': item.image_url,
             'create_at': item.create_at,
             'user_id': item.user_id,
-            'username': User.getusername(item.user_id),
+            'profile_pic': user.profile_pic,
+            'username': user.username,
             'likes': item.likes,
             'comments': comments
         })
@@ -295,6 +305,7 @@ def getpost(current_user):
 
             comments.clear()
             comment = Comments.getcomments(i.id)
+            user = User.get_by_id(i.user_id)
 
             for c in comment:
                 comments.append({
@@ -309,7 +320,8 @@ def getpost(current_user):
                 'image_url': i.image_url,
                 'create_at': i.create_at,
                 'user_id': i.user_id,
-                'username': User.getusername(i.user_id),
+                'profile_pic': user.profile_pic,
+                'username': user.username,
                 'likes': i.likes,
                 'comments': comments
             })
@@ -387,10 +399,12 @@ def getcomment(post_id):
     commentobj = Comments.getcomments(post_id=post_id)
 
     for c in commentobj:
+        user = User.get_profile_pic(c.user_id)
         comments.append({
             'comment': c.comment,
             'username': User.getusername(c.user_id),
-            'create_at': c.create_at
+            'create_at': c.create_at,
+            'profile_pic': user.profile_pic
         })
     return jsonify(comments), 200
 
@@ -497,7 +511,6 @@ def update_user_settings(current_user):
         return response('success', 'successfully updated user settings', 200)
     else:
         return response('failed', 'Failed update', 400)
-
 
 # @routes.route("/getsettings", methods=['GET'])
 # @token_required
