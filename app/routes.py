@@ -63,6 +63,7 @@ def login():
 
 @routes.route('/getuser', methods=['POST'])
 def getuser():
+    global user_steps
     values = request.get_json()
     required = ['user_id']
     if not all(k in values for k in required):
@@ -71,13 +72,15 @@ def getuser():
     count = Community.get_community_count(values.get('user_id'))
     post_count = Post.get_post_count(values.get('user_id'))
     steps = Steps.get_steps(values.get('user_id'), 1)
+    for item in steps:
+        user_steps = item.steps_no
     if user:
         data = {
             'user_id': user.id,
             'username': user.username,
             'community': count,
             'posts': post_count,
-            'steps_today': steps.steps_no
+            'steps_today': user_steps
         }
     else:
         return response('failed', 'User Does not exist', 401)
