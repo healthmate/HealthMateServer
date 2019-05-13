@@ -90,15 +90,18 @@ def getuser():
 @routes.route('/getuserprofile', methods=['POST'])
 @token_required
 def getuserprofile(current_user):
+    global user_steps
     count = Community.get_community_count(current_user.id)
     post_count = Post.get_post_count(current_user.id)
     steps = Steps.get_steps(current_user.id, 1)
+    for item in steps:
+        user_steps = item.steps_no
     data = {
         'user_id': current_user.id,
         'username': current_user.username,
         'community': count,
         'posts': post_count,
-        'steps_today': steps.steps_no
+        'steps_today': user_steps
     }
 
     return jsonify(data), 200
@@ -107,6 +110,7 @@ def getuserprofile(current_user):
 @routes.route('/getuserprofile/<userid>', methods=['POST'])
 @token_required
 def getuserprofileid(current_user, userid):
+    global user_steps
     isFollowing = False
     community = Community.get_community(current_user.id)
     for person in community:
@@ -116,6 +120,8 @@ def getuserprofileid(current_user, userid):
     post_count = Post.get_post_count(userid)
     steps = Steps.get_steps(userid, 1)
     user = User.get_by_id(userid)
+    for item in steps:
+        user_steps = item.steps_no
     data = {
         'user_id': userid,
         'username': User.getusername(userid),
@@ -123,7 +129,7 @@ def getuserprofileid(current_user, userid):
         'posts': post_count,
         'isFollowing': isFollowing,
         'full_name': user.first_name + " " + user.last_name,
-        'steps_today': steps.steps_no
+        'steps_today': user_steps
     }
 
     return jsonify(data), 200
