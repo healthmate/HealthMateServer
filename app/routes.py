@@ -70,12 +70,14 @@ def getuser():
     user = User.get_by_id(values.get('user_id'))
     count = Community.get_community_count(values.get('user_id'))
     post_count = Post.get_post_count(values.get('user_id'))
+    steps = Steps.get_steps(values.get('user_id'), 1)
     if user:
         data = {
             'user_id': user.id,
             'username': user.username,
             'community': count,
-            'posts': post_count
+            'posts': post_count,
+            'steps_today': steps.steps_no
         }
     else:
         return response('failed', 'User Does not exist', 401)
@@ -87,11 +89,13 @@ def getuser():
 def getuserprofile(current_user):
     count = Community.get_community_count(current_user.id)
     post_count = Post.get_post_count(current_user.id)
+    steps = Steps.get_steps(current_user.id, 1)
     data = {
         'user_id': current_user.id,
         'username': current_user.username,
         'community': count,
-        'posts': post_count
+        'posts': post_count,
+        'steps_today': steps.steps_no
     }
 
     return jsonify(data), 200
@@ -107,6 +111,7 @@ def getuserprofileid(current_user, userid):
             isFollowing = True
     count = Community.get_community_count(userid)
     post_count = Post.get_post_count(userid)
+    steps = Steps.get_steps(userid, 1)
     user = User.get_by_id(userid)
     data = {
         'user_id': userid,
@@ -114,7 +119,8 @@ def getuserprofileid(current_user, userid):
         'community': count,
         'posts': post_count,
         'isFollowing': isFollowing,
-        'full_name': user.first_name + " " + user.last_name
+        'full_name': user.first_name + " " + user.last_name,
+        'steps_today': steps.steps_no
     }
 
     return jsonify(data), 200
@@ -199,12 +205,18 @@ def getuserpostid(current_user):
     posts = []
     post = Post.get_posts(current_user.id)
     comments = []
+    is_liked = False
 
     for item in post:
 
         comments.clear()
         comment = Comments.getcomments(item.id)
         user = User.get_by_id(item.user_id)
+
+        likers = Likes.getlikers(post_id=item.id)
+        for liker in likers:
+            if liker.user_id == current_user.id:
+                is_liked = True
 
         for c in comment:
             comments.append({
@@ -222,13 +234,15 @@ def getuserpostid(current_user):
             'profile_pic': user.profile_pic,
             'username': user.username,
             'likes': item.likes,
-            'comments': comments
+            'comments': comments,
+            'is_liked': is_liked
         })
     return jsonify(posts), 200
 
 
 @routes.route('/getuserposts/<user_id>', methods=['GET'])
-def getuserpost(user_id):
+@token_required
+def getuserpost(current_user, user_id):
     """
     get posts
     :return:
@@ -236,12 +250,18 @@ def getuserpost(user_id):
     posts = []
     post = Post.get_posts(user_id)
     comments = []
+    is_liked = False
 
     for item in post:
 
         comments.clear()
         comment = Comments.getcomments(item.id)
         user = User.get_by_id(item.user_id)
+
+        likers = Likes.getlikers(post_id=item.id)
+        for liker in likers:
+            if liker.user_id == current_user.id:
+                is_liked = True
 
         for c in comment:
             comments.append({
@@ -259,7 +279,8 @@ def getuserpost(user_id):
             'profile_pic': user.profile_pic,
             'username': user.username,
             'likes': item.likes,
-            'comments': comments
+            'comments': comments,
+            'is_liked': is_liked
         })
     return jsonify(posts), 200
 
@@ -275,11 +296,18 @@ def getpost(current_user):
     comments = []
     post = Post.get_posts(current_user.id)
     community = Community.get_community(current_user.id)
+    is_liked = False
+
     for item in post:
 
         comments.clear()
         comment = Comments.getcomments(item.id)
         user = User.get_by_id(item.user_id)
+
+        likers = Likes.getlikers(post_id=item.id)
+        for liker in likers:
+            if liker.user_id == current_user.id:
+                is_liked = True
 
         for c in comment:
             comments.append({
@@ -297,8 +325,10 @@ def getpost(current_user):
             'profile_pic': user.profile_pic,
             'username': user.username,
             'likes': item.likes,
-            'comments': comments
+            'comments': comments,
+            'is_liked': is_liked
         })
+
     for person in community:
         data = Post.get_posts(person.community_id)
         for i in data:
@@ -306,6 +336,11 @@ def getpost(current_user):
             comments.clear()
             comment = Comments.getcomments(i.id)
             user = User.get_by_id(i.user_id)
+
+            likers = Likes.getlikers(post_id=i.id)
+            for liker in likers:
+                if liker.user_id == current_user.id:
+                    is_liked = True
 
             for c in comment:
                 comments.append({
@@ -323,7 +358,8 @@ def getpost(current_user):
                 'profile_pic': user.profile_pic,
                 'username': user.username,
                 'likes': i.likes,
-                'comments': comments
+                'comments': comments,
+                'is_liked': is_liked
             })
 
     return jsonify(posts), 200
