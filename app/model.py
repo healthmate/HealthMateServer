@@ -19,6 +19,7 @@ class User(db.Model):
     post = db.relationship('Post', backref='post', lazy='dynamic')
     community = db.relationship('Community', backref='community', lazy='dynamic')
     steps = db.relationship('Steps', backref='step', lazy='dynamic')
+    foodhistory = db.relationship('FoodHistory', backref='foodhistory', lazy='dynamic')
 
     def __init__(self, email, password, first_name, last_name, username):
         self.email = email
@@ -469,7 +470,9 @@ class UserSetting(db.Model):
     height = db.Column(db.String, nullable=False)
     goal_weight = db.Column(db.String(255), nullable=False)
     duration = db.Column(db.Integer, nullable=False)
-    net_calorie_goal = db.Column(db.String, nullable=False)
+    daily_calorie_goal = db.Column(db.String, nullable=False)
+    weekly_calorie_goal = db.Column(db.Integer, nullable=False)
+    goal_calorie = db.Column(db.Integer, nullable=False)
     is_diabetic = db.Column(db.String, nullable=False)
     activity_level = db.Column(db.String, nullable=False)
 
@@ -501,12 +504,12 @@ class UserSetting(db.Model):
             instance.height = height
             instance.activity_level = activity_level
             instance.duration = goal_weight - average_weight
-            instance.net_calorie_goal = UserSetting.get_net_calorie(user_id,goal_weight,average_weight)
+            instance.daily_calorie_goal = UserSetting.get_net_calorie(user_id, goal_weight, average_weight)
+            instance.weekly_calorie_goal = UserSetting.get_net_calorie(user_id, goal_weight, average_weight) * 7
 
             db.session.commit()
             return True
         return False
-
 
     @staticmethod
     def centimetertoinches(user_id):
@@ -564,26 +567,27 @@ class UserSetting(db.Model):
             return total_bmr
 
     @staticmethod
-    #Net calorie/daily calorie goal Implementation
+    # daily calorie goal Implementation
     def get_net_calorie(user_id, goal_weight, average_weight):
         average_calorie = UserSetting.calorie_needs(user_id)
-        #user_setting = UserSetting.query.filter_by(id=user_id).first()
-        #goal_weight = goal_weight
-        #average_weight = average_weight
+        # user_setting = UserSetting.query.filter_by(id=user_id).first()
+        # goal_weight = goal_weight
+        # average_weight = average_weight
         if goal_weight == average_weight:
             goal_calorie = average_calorie
             return goal_calorie
 
         elif goal_weight > average_weight:
-            required_calorie = UserSetting.gainbyakg(user_id)
-            goal_calorie = average_calorie + required_calorie/7
+            required_calorie_goal = UserSetting.gainbyakg(user_id)
+            required_calorie = required_calorie_goal / (goal_weight - average_weight)
+            goal_calorie = average_calorie + required_calorie / 7
             return goal_calorie
 
         else:
-            required_calorie = UserSetting.losebyakg(user_id)
-            goal_calorie = average_calorie - required_calorie/7
+            required_calorie_goal = UserSetting.losebyakg(user_id)
+            required_calorie = required_calorie_goal / (average_weight - goal_weight)
+            goal_calorie = average_calorie + (required_calorie / 7)
             return goal_calorie
-
 
     @staticmethod
     def gainbyakg(user_id):
@@ -592,14 +596,15 @@ class UserSetting(db.Model):
         average_weight = user_setting.average_weight
         weight_gain = goal_weight - average_weight
         calorie_required = weight_gain * 7700
-        return calorie_required
+        user_setting.goal_calorie = calorie_required
+        db..commit()
 
     @staticmethod
     def losebyakg(user_id):
         user_setting = UserSetting.query.filter_by(id=user_id).first()
         goal_weight = user_setting.goal_weight
         average_weight = user_setting.average_weight
-        weight_loss = average_weight - goal_weight
+        weight_loss = goal_weight - average_weight
         calorie_required = weight_loss * 7700
         return calorie_required
 
@@ -627,25 +632,151 @@ class Recommendation(db.Model):
     #     db.Session.add(self)
     #     db.Session.commit()
 
+    @staticmethod
+    def compare_time():
+        today_date = datetime.datetime.today()
+        morning = 11
+        afternoon = 17
+        if today_date.hour <= morning:
+            meal_time = 'Breakfast'
+            return meal_time
+        elif (today_date.hour > morning) and (today_date.hour <= afternoon):
+            meal_time = 'Lunch'
+            return meal_time
+        else:
+            meal_time = 'Dinner'
+            return meal_time
+
     """
-    Method for recommendation algorithm
+    Checks the time of the day and classifies the time in breakfast lunch and dinner
     """
+
+    @staticmethod
+    def calculate_calorie_meal_requirement(user_id):
+        type_of_meal = Recommendation.compare_time()
+        user_setting = UserSetting.query.filter_by(id=user_id)
+        net_calorie_goal = user_setting.daily_calorie_goal
+        if type_of_meal == "Breakfast":
+            calorie_limit = 0.2 * net_calorie_goal
+            return calorie_limit
+
+        elif type_of_meal == "Lunch":
+            calorie_limit = 0.4 * net_calorie_goal
+            return calorie_limit
+        else:
+            calorie_limit = 0.4 * net_calorie_goal
+            return calorie_limit
+
+    """
+    calculates the calorie limit for breakfast, lunch and dinner
+    """
+
+    @staticmethod
+    def recommendation_algorithm(user_id):
+        user_setting = UserSetting.query.filter_by(id=user_id).first()
+        health_condition = user_setting.is_diabetic
+        calories = Recommendation.calculate_calorie_meal_requirement(user_id)
+        type_of_meal = Recommendation.compare_time()
+
+        if health_condition == "True" and type_of_meal == "Breakfast":
+            return Food.query.filter(
+                and_(Recommendation.is_diabetic == "True", Recommendation.breakfast == "True",
+                     Recommendation.calories <= calories)).all()
+        elif health_condition == "False" and type_of_meal == "Breakfast":
+            return Food.query.filter(
+                and_(Recommendation.is_diabetic == "False", Recommendation.breakfast == "True",
+                     Recommendation.calories <= calories)).all()
+        elif health_condition == "True" and type_of_meal == "Lunch":
+            return Food.query.filter(and_(Recommendation.is_diabetic == "True", Recommendation.lunch == "True",
+                                          Recommendation.calories <= calories)).all()
+        elif health_condition == "False" and type_of_meal == "Lunch":
+            return Food.query.filter(and_(Recommendation.is_diabetic == "False", Recommendation.lunch == "True",
+                                          Recommendation.calories <= calories)).all()
+        elif health_condition == "True" and type_of_meal == "Dinner":
+            return Food.query.filter(and_(Recommendation.is_diabetic == "True", Recommendation.dinner == "True",
+                                          Recommendation.calories <= calories)).all()
+        elif health_condition == "False" and type_of_meal == "Dinner":
+            return Food.query.filter(and_(Recommendation.is_diabetic == "False", Recommendation.dinner == "True",
+                                          Recommendation.calories <= calories)).all()
 
 
 class Food(db.Model):
     __tablename__ = "food"
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     name_of_food = db.Column(db.String(255), nullable=False)
-    grammes = db.Column(db.Integer, nullable=False)
+    calories = db.Column(db.Integer, nullable=False)
+    breakfast = db.Column(db.String, nullable=False)
+    lunch = db.Column(db.String, nullable=False)
+    dinner = db.Column(db.String, nullable=False)
+    is_diabetic = db.Column(db.String, nullable=False)
 
     # def __init__(self, id, name_of_food, grammes):
     #     self.id = id
     #     self.name_of_food = name_of_food
     #     self.grammes = grammes
 
+    @staticmethod
+    def get_all_meals():
+        return Food.query.filter_by(id=id).all()
+
+    @staticmethod
+    def sort_food(user_id):
+        user_setting = UserSetting.query.filter_by(id=user_id).first()
+        is_diabetic = user_setting.is_diabetic
+        type_of_meal = Recommendation.compare_time()
+        if is_diabetic == "True" and type_of_meal == "Breakfast":
+            return Food.query.filter(and_(Food.is_diabetic == "True", Food.breakfast == "True")).all()
+        elif is_diabetic == "False" and type_of_meal == "Breakfast":
+            return Food.query.filter(and_(Food.is_diabetic == "False", Food.breakfast == "True")).all()
+        elif is_diabetic == "True" and type_of_meal == "Lunch":
+            return Food.query.filter(and_(Food.is_diabetic == "True", Food.lunch == "True")).all()
+        elif is_diabetic == "False" and type_of_meal == "Lunch":
+            return Food.query.filter(and_(Food.is_diabetic == "False", Food.lunch == "True")).all()
+        elif is_diabetic == "True" and type_of_meal == "Dinner":
+            return Food.query.filter(and_(Food.is_diabetic == "True", Food.dinner == "True")).all()
+        elif is_diabetic == "False" and type_of_meal == "Dinner":
+            return Food.query.filter(and_(Food.is_diabetic == "False", Food.dinner == "True")).all()
+
+    """used to implement the list of foods of calorie calculator"""
+    @staticmethod
+    def getCalories(food):
+        meal = Food.query.filter_by(name_of_food=food).first()
+        calories = int(meal.calories)
+        return calories
+
 
 class FoodHistory(db.Model):
     __tablename__ = "foodhistory"
-    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    name_of_food = db.Column(db.String(255), nullable=False)
+    id = db.Column(db.String, primary_key=True)
+    user_id = db.Column(db.String, db.ForeignKey('users.id'))
+    breakfast = db.Column(db.String(255), nullable=True)
+    lunch = db.Column(db.String(255), nullable=True)
+    dinner = db.Column(db.String(255), nullable=True)
     date = db.Column(db.DateTime, nullable=False)
+    calorie_deficit = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, user_id, breakfast, lunch, dinner, date, calorie_deficit):
+        self.user_id = user_id
+        self.breakfast = breakfast
+        self.lunch = lunch
+        self.dinner = dinner
+        self.date = date
+        self.calorie_deficit = calorie_deficit
+        self.id = uuid.uuid4().__str__()
+
+    def save(self):
+        """
+        Persist the foodhistory in the database
+        :param :
+        :return:
+        """
+        db.session.add(self)
+        db.session.commit()
+
+    @staticmethod
+    def get_user_food_history(user_id):
+        return FoodHistory.query.filter(FoodHistory.user_id == user_id).all()
+
+    @staticmethod
+    def dynamic_plan(deficit):
+
