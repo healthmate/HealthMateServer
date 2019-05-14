@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, Blueprint
-from app.model import User, Post, Community, Comments, Likes, Steps, Challenge, UserSetting
+from app.model import User, Post, Community, Comments, Likes, Steps, Challenge, UserSetting, Food
 import re
 import datetime
 from app.helper import response, response_auth, response_login, token_required
@@ -13,7 +13,7 @@ routes = Blueprint('routes', __name__)
 @routes.route("/auth/register", methods=["POST"])
 def register():
     values = request.get_json()
-    required = ['username', 'last_name', 'first_name', 'password', 'email', 'profile_pic', 'gender', 'age']
+    required = ['username', 'last_name', 'first_name', 'password', 'email']
     if not all(k in values for k in required):
         return 'Missing values', 400
     email = values.get('email')
@@ -21,9 +21,6 @@ def register():
     last_name = values.get('last_name')
     first_name = values.get('first_name')
     password = values.get('password')
-    gender = values.get('gender')
-    age = values.get('age')
-    profile_pic = values.get("profile_pic")
 
     if re.match(r"[^@]+@[^@]+\.[^@]+", email) and len(password) > 4:
         user = User.get_by_email(email)
@@ -32,7 +29,7 @@ def register():
             return response('failed', 'Failed, username already exists', 202)
         if not user:
             token = User(email=email, password=password, first_name=first_name, last_name=last_name,
-                         username=username, gender=gender, age=age, profile_pic=profile_pic).save()
+                         username=username).save()
             return response_auth('success', 'Successfully registered', token, 201)
         else:
             return response('failed', 'Failed, User already exists, Please sign In', 202)
@@ -52,8 +49,7 @@ def login():
         if user and bcrypt.check_password_hash(user.password, password):
             data = {
                 'username': user.username,
-                'fullname': user.first_name + " " + user.last_name,
-                'profile_pic': user.profile_pic
+                'fullname': user.first_name + " " + user.last_name
             }
             return response_login(data, 'Successfully logged In', user.encode_auth_token(user.id),
                                   200)
@@ -63,7 +59,6 @@ def login():
 
 @routes.route('/getuser', methods=['POST'])
 def getuser():
-    global user_steps
     values = request.get_json()
     required = ['user_id']
     if not all(k in values for k in required):
@@ -71,16 +66,12 @@ def getuser():
     user = User.get_by_id(values.get('user_id'))
     count = Community.get_community_count(values.get('user_id'))
     post_count = Post.get_post_count(values.get('user_id'))
-    steps = Steps.get_steps(values.get('user_id'), 1)
-    for item in steps:
-        user_steps = item.steps_no
     if user:
         data = {
             'user_id': user.id,
             'username': user.username,
             'community': count,
-            'posts': post_count,
-            'steps_today': user_steps
+            'posts': post_count
         }
     else:
         return response('failed', 'User Does not exist', 401)
@@ -90,18 +81,13 @@ def getuser():
 @routes.route('/getuserprofile', methods=['POST'])
 @token_required
 def getuserprofile(current_user):
-    global user_steps
     count = Community.get_community_count(current_user.id)
     post_count = Post.get_post_count(current_user.id)
-    steps = Steps.get_steps(current_user.id, 1)
-    for item in steps:
-        user_steps = item.steps_no
     data = {
         'user_id': current_user.id,
         'username': current_user.username,
         'community': count,
-        'posts': post_count,
-        'steps_today': user_steps
+        'posts': post_count
     }
 
 
@@ -111,7 +97,6 @@ def getuserprofile(current_user):
 @routes.route('/getuserprofile/<userid>', methods=['POST'])
 @token_required
 def getuserprofileid(current_user, userid):
-    global user_steps
     isFollowing = False
     community = Community.get_community(current_user.id)
     for person in community:
@@ -119,18 +104,14 @@ def getuserprofileid(current_user, userid):
             isFollowing = True
     count = Community.get_community_count(userid)
     post_count = Post.get_post_count(userid)
-    steps = Steps.get_steps(userid, 1)
     user = User.get_by_id(userid)
-    for item in steps:
-        user_steps = item.steps_no
     data = {
         'user_id': userid,
         'username': User.getusername(userid),
         'community': count,
         'posts': post_count,
         'isFollowing': isFollowing,
-        'full_name': user.first_name + " " + user.last_name,
-        'steps_today': user_steps
+        'full_name': user.first_name + " " + user.last_name
     }
 
     return jsonify(data), 200
@@ -154,8 +135,7 @@ def search(current_user):
         data = {
             'user_id': user.id,
             'username': user.username,
-            'community': isFollowing,
-            'profile_pic': user.profile_pic
+            'community': isFollowing
         }
     else:
         return response('failed', 'User Does not exist', 401)
@@ -215,18 +195,11 @@ def getuserpostid(current_user):
     posts = []
     post = Post.get_posts(current_user.id)
     comments = []
-    is_liked = False
 
     for item in post:
 
         comments.clear()
         comment = Comments.getcomments(item.id)
-        user = User.get_by_id(item.user_id)
-
-        likers = Likes.getlikers(post_id=item.id)
-        for liker in likers:
-            if liker.user_id == current_user.id:
-                is_liked = True
 
         for c in comment:
             comments.append({
@@ -241,18 +214,15 @@ def getuserpostid(current_user):
             'image_url': item.image_url,
             'create_at': item.create_at,
             'user_id': item.user_id,
-            'profile_pic': user.profile_pic,
-            'username': user.username,
+            'username': User.getusername(item.user_id),
             'likes': item.likes,
-            'comments': comments,
-            'is_liked': is_liked
+            'comments': comments
         })
     return jsonify(posts), 200
 
 
 @routes.route('/getuserposts/<user_id>', methods=['GET'])
-@token_required
-def getuserpost(current_user, user_id):
+def getuserpost(user_id):
     """
     get posts
     :return:
@@ -260,18 +230,11 @@ def getuserpost(current_user, user_id):
     posts = []
     post = Post.get_posts(user_id)
     comments = []
-    is_liked = False
 
     for item in post:
 
         comments.clear()
         comment = Comments.getcomments(item.id)
-        user = User.get_by_id(item.user_id)
-
-        likers = Likes.getlikers(post_id=item.id)
-        for liker in likers:
-            if liker.user_id == current_user.id:
-                is_liked = True
 
         for c in comment:
             comments.append({
@@ -286,11 +249,9 @@ def getuserpost(current_user, user_id):
             'image_url': item.image_url,
             'create_at': item.create_at,
             'user_id': item.user_id,
-            'profile_pic': user.profile_pic,
-            'username': user.username,
+            'username': User.getusername(item.user_id),
             'likes': item.likes,
-            'comments': comments,
-            'is_liked': is_liked
+            'comments': comments
         })
     return jsonify(posts), 200
 
@@ -306,18 +267,10 @@ def getpost(current_user):
     comments = []
     post = Post.get_posts(current_user.id)
     community = Community.get_community(current_user.id)
-    is_liked = False
-
     for item in post:
 
         comments.clear()
         comment = Comments.getcomments(item.id)
-        user = User.get_by_id(item.user_id)
-
-        likers = Likes.getlikers(post_id=item.id)
-        for liker in likers:
-            if liker.user_id == current_user.id:
-                is_liked = True
 
         for c in comment:
             comments.append({
@@ -332,25 +285,16 @@ def getpost(current_user):
             'image_url': item.image_url,
             'create_at': item.create_at,
             'user_id': item.user_id,
-            'profile_pic': user.profile_pic,
-            'username': user.username,
+            'username': User.getusername(item.user_id),
             'likes': item.likes,
-            'comments': comments,
-            'is_liked': is_liked
+            'comments': comments
         })
-
     for person in community:
         data = Post.get_posts(person.community_id)
         for i in data:
 
             comments.clear()
             comment = Comments.getcomments(i.id)
-            user = User.get_by_id(i.user_id)
-
-            likers = Likes.getlikers(post_id=i.id)
-            for liker in likers:
-                if liker.user_id == current_user.id:
-                    is_liked = True
 
             for c in comment:
                 comments.append({
@@ -365,11 +309,9 @@ def getpost(current_user):
                 'image_url': i.image_url,
                 'create_at': i.create_at,
                 'user_id': i.user_id,
-                'profile_pic': user.profile_pic,
-                'username': user.username,
+                'username': User.getusername(i.user_id),
                 'likes': i.likes,
-                'comments': comments,
-                'is_liked': is_liked
+                'comments': comments
             })
 
     return jsonify(posts), 200
@@ -445,12 +387,10 @@ def getcomment(post_id):
     commentobj = Comments.getcomments(post_id=post_id)
 
     for c in commentobj:
-        user = User.get_by_id(c.user_id)
         comments.append({
             'comment': c.comment,
-            'username': user.username,
-            'create_at': c.create_at,
-            'profile_pic': user.profile_pic
+            'username': User.getusername(c.user_id),
+            'create_at': c.create_at
         })
     return jsonify(comments), 200
 
@@ -541,6 +481,36 @@ def get_all_challenges(current_user):
     return jsonify(resp), 200
 
 
+"""@routes.route('/notification/save', methods=['POST'])
+@token_required
+def save_notification(current_user):
+    values = request.get_json()
+    required = ['message']
+    if not all(k in values for k in required):
+        return 'Missing values', 400
+    user_id = values.get("user_id")
+    message = values.get("message")
+    is_post_related = "False"
+    is_community_request = "False"
+    community_invitee = None
+    post_id = None
+
+    if values.get("is_post_related"):
+        is_post_related = values.get("is_post_related")
+    if values.get("is_community_request"):
+        is_community_request = values.get("is_community_request")
+    if values.get("community_invitee"):
+        community_invitee = current_user.id
+    if values.get("post_id"):
+        post_id = values.get("post_id")
+
+<<<<<<< HEAD
+    notification = Notification(user_id=user_id, is_deleted=is_deleted, message=message, is_challenge=is_challenge,
+                                is_post_related=is_post_related, is_community_request=is_community_request,
+                                community_invitee=community_invitee, challenge_id=challenge_id, post_id=post_id)
+    notification.save()"""
+
+
 @routes.route("/updatesettings", methods=['POST'])
 @token_required
 def update_user_settings(current_user):
@@ -554,17 +524,83 @@ def update_user_settings(current_user):
                               , values.get('is_diabetic'))
 
     if resp:
-        return response('success', 'successfully updated user settings', 200)
+        return response('success', 'successfully updated user settings', 20)
     else:
         return response('failed', 'Failed update', 400)
 
-# @routes.route("/getsettings", methods=['GET'])
+
+@routes.route("/getsettings", methods=['GET'])
+@token_required
+def getsettings(current_user):
+    setting = UserSetting.get_user_settings(current_user.id)
+    data = {
+        'average_weight': setting.average_weight,
+        'height': setting.height,
+        'goal_weight': setting.goal_weight,
+        'duration': setting.duration,
+        'daily_calorie_goal': setting.daily_calorie_goal,
+        'weekly_calorie_goal': setting.weekly_calorie_goal,
+        'is_diabetic': setting.is_diabetic,
+        'activity_level': setting.activity_level
+    }
+
+    return data
+
+
+@routes.route("/food/getcalories", methods=['POST'])
+@token_required
+def getcalories(current_user):
+    values = request.get_json()
+    required = ['foods']
+    if not all(k in values for k in required):
+        return 'Missing values', 400
+    calories = 0
+    foods = values.get("foods")
+    for item in foods:
+        calories = calories + Food.getCalories(item)
+
+# =======
+#     notification = Notification(user_id=user_id, message=message,
+#                                 is_post_related=is_post_related,
+#                                 community_invitee=community_invitee, post_id=post_id,
+#                                 is_community_request=is_community_request)
+#     notification.save()
+#     return response('success', 'notification sent successfully', 200)
+#
+#
+# @routes.route('/notification/get', methods=['GET'])
 # @token_required
-# def getsettings(current_user):
-#     setting = UserSetting.get_user_settings(current_user.id)
-#     data = {
-#         'average_weight': setting.average_weight,
-#         'goal_weight': setting.goal_weight,
-#         'net_calorie_goal': setting.net_calorie,
-#         ''
-#     }
+# def get_notification(current_user):
+#     notifications = Notification.get_notifications(current_user.id)
+#     response = []
+#     for notification in notifications:
+#         response.append({
+#             "id": notification.id,
+#             "user_id": notification.user_id,
+#             "create_at": notification.create_at,
+#             "message": notification.message,
+#             "is_post_related": notification.is_post_related,
+#             "is_community_request": notification.is_community_request,
+#             "community_invitee": notification.community_invitee,
+#             "post_id": notification.post_id
+#         })
+#     return jsonify(response), 200
+#
+#
+# @routes.route('/notification/update', methods=['POST'])
+# @token_required
+# def update_community_request(current_user):
+#     values = request.get_json()
+#     required = ['community_id', 'is_accepted', 'notification_id']
+#     if not all(k in values for k in required):
+#         return 'Missing values', 400
+#     is_accepted = values.get("is_accepted")
+#     if is_accepted == "True" and not Community.already_community(community_id=current_user.id,
+#                                                                  user_id=values.get("community_id")):
+#         community = Community(community_id=values.get("community_id"), user_id=current_user.id)
+#         community.save()
+#         community = Community(community_id=current_user.id, user_id=values.get("community_id"))
+#         community.save()
+#     Notification.request_answered(values.get("notification_id"))
+# """
+# >>>>>>> e5306be1899b77d220cfe9c83f2c0ebe765e5cef
