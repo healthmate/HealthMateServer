@@ -600,6 +600,7 @@ class Meal_table(db.Model):
     #     db.Session.add(self)
     #     db.Session.commit()
 
+
     """
     Method for recommendation algorithm
     """
