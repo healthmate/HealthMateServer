@@ -486,8 +486,9 @@ class UserSetting(db.Model):
         self.image_url = image_url"""
 
     def save(self):
-        db.Session.add(self)
-        db.Session.commit()
+        db.session.add(self)
+        db.session.commit()
+
 
     @staticmethod
     def get_user_settings(user_id):
@@ -597,7 +598,7 @@ class UserSetting(db.Model):
         weight_gain = goal_weight - average_weight
         calorie_required = weight_gain * 7700
         user_setting.goal_calorie = calorie_required
-        db..commit()
+        db.session.commit()
 
     @staticmethod
     def losebyakg(user_id):
