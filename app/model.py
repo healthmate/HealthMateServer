@@ -16,12 +16,15 @@ class User(db.Model):
     password = db.Column(db.String(255), nullable=False)
     username = db.Column(db.String(255), unique=True, nullable=False)
     registered_on = db.Column(db.DateTime, nullable=False)
+    profile_pic = db.Column(db.String(255), nullable=True)
+    gender = db.Column(db.String, nullable=True)
+    age = db.Column(db.Integer, nullable=True)
     post = db.relationship('Post', backref='post', lazy='dynamic')
     community = db.relationship('Community', backref='community', lazy='dynamic')
     steps = db.relationship('Steps', backref='step', lazy='dynamic')
-    foodhistory = db.relationship('FoodHistory', backref='foodhistory', lazy='dynamic')
+    usersetting = db.relationship('UserSetting', backref='usersetting', lazy='dynamic')
 
-    def __init__(self, email, password, first_name, last_name, username):
+    def __init__(self, email, password, first_name, last_name, username, gender, age, profile_pic):
         self.email = email
         self.password = bcrypt.generate_password_hash(password, app.config.get('BCRYPT_LOG_ROUNDS')) \
             .decode('utf-8')
@@ -29,6 +32,9 @@ class User(db.Model):
         self.last_name = last_name
         self.username = username
         self.registered_on = datetime.datetime.now()
+        self.age = age
+        self.gender = gender
+        self.profile_pic = profile_pic
         self.id = uuid.uuid4().__str__()
 
     def save(self):
@@ -116,6 +122,11 @@ class User(db.Model):
 
         return user.username
 
+    @staticmethod
+    def get_profile_pic(user_id):
+        user = User.query.filter_by(id=user_id).first()
+        return user.profile_pic
+
 
 class Post(db.Model):
     __tablename__ = 'posts'
@@ -156,7 +167,7 @@ class Post(db.Model):
 
     @staticmethod
     def get_posts(user_id):
-        post = Post.query.filter_by(user_id=user_id).all()
+        post = Post.query.filter_by(user_id=user_id).order_by(Post.create_at.desc()).all()
         return post
 
     @staticmethod
@@ -424,45 +435,6 @@ class Challenge(db.Model):
         return steps
 
 
-"""
-class Notification(db.Model):
-    __tablename__ = 'notifications'
-
-    id = db.Column(db.String, primary_key=True)
-    user_id = db.Column(db.String, db.ForeignKey('users.id'))
-    message = db.Column(db.String, nullable=False)
-    create_at = db.Column(db.DateTime, nullable=False)
-    community_invitee = db.Column(db.String, nullable=True)
-    post_id = db.Column(db.String, db.ForeignKey('posts.id'), nullable=True)
-    is_post_related = db.Column(db.String, nullable=False)
-    is_community_request = db.Column(db.String, nullable=False)
-    community_request_answered = db.Column(db.String, nullable=False)
-
-    def __init__(self, user_id, message=None, community_invitee=None,
-                 post_id=None, is_post_related="False", is_community_request="False"):
-        self.id = uuid.uuid4().__str__()
-        self.user_id = user_id
-        self.create_at = datetime.datetime.now()
-        self.message = message
-        self.is_post_related = is_post_related
-        self.is_community_request = is_community_request
-        if community_invitee:
-            self.community_invitee = community_invitee
-        if post_id:
-            self.post_id = post_id
-        self.community_request_answered = "False"
-
-    def save(self):
-
-        db.session.add(self)
-        db.session.commit()
-
-    @staticmethod
-    def get_notifications(user_id):
-        return Notification.query.filter(
-            and_(Notification.user_id == user_id, Notification.is_deleted == "False")).all()"""
-
-
 class UserSetting(db.Model):
     __tablename__ = "usersetting"
     user_id = db.Column(db.String(255), primary_key=True, foreign_key=True, required=True)
@@ -610,7 +582,7 @@ class UserSetting(db.Model):
         return calorie_required
 
 
-class Recommendation(db.Model):
+class Meal_table(db.Model):
     __tablename__ = "mealtable"
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     name_of_food = db.Column(db.String(255), nullable=False)
@@ -654,7 +626,7 @@ class Recommendation(db.Model):
 
     @staticmethod
     def calculate_calorie_meal_requirement(user_id):
-        type_of_meal = Recommendation.compare_time()
+        type_of_meal = Meal_table.compare_time()
         user_setting = UserSetting.query.filter_by(id=user_id)
         net_calorie_goal = user_setting.daily_calorie_goal
         if type_of_meal == "Breakfast":
@@ -676,29 +648,29 @@ class Recommendation(db.Model):
     def recommendation_algorithm(user_id):
         user_setting = UserSetting.query.filter_by(id=user_id).first()
         health_condition = user_setting.is_diabetic
-        calories = Recommendation.calculate_calorie_meal_requirement(user_id)
-        type_of_meal = Recommendation.compare_time()
+        calories = Meal_table.calculate_calorie_meal_requirement(user_id)
+        type_of_meal = Meal_table.compare_time()
 
         if health_condition == "True" and type_of_meal == "Breakfast":
             return Food.query.filter(
-                and_(Recommendation.is_diabetic == "True", Recommendation.breakfast == "True",
-                     Recommendation.calories <= calories)).all()
+                and_(Meal_table.is_diabetic == "True", Meal_table.breakfast == "True",
+                     Meal_table.calories <= calories)).all()
         elif health_condition == "False" and type_of_meal == "Breakfast":
             return Food.query.filter(
-                and_(Recommendation.is_diabetic == "False", Recommendation.breakfast == "True",
-                     Recommendation.calories <= calories)).all()
+                and_(Meal_table.is_diabetic == "False", Meal_table.breakfast == "True",
+                     Meal_table.calories <= calories)).all()
         elif health_condition == "True" and type_of_meal == "Lunch":
-            return Food.query.filter(and_(Recommendation.is_diabetic == "True", Recommendation.lunch == "True",
-                                          Recommendation.calories <= calories)).all()
+            return Food.query.filter(and_(Meal_table.is_diabetic == "True", Meal_table.lunch == "True",
+                                          Meal_table.calories <= calories)).all()
         elif health_condition == "False" and type_of_meal == "Lunch":
-            return Food.query.filter(and_(Recommendation.is_diabetic == "False", Recommendation.lunch == "True",
-                                          Recommendation.calories <= calories)).all()
+            return Food.query.filter(and_(Meal_table.is_diabetic == "False", Meal_table.lunch == "True",
+                                          Meal_table.calories <= calories)).all()
         elif health_condition == "True" and type_of_meal == "Dinner":
-            return Food.query.filter(and_(Recommendation.is_diabetic == "True", Recommendation.dinner == "True",
-                                          Recommendation.calories <= calories)).all()
+            return Food.query.filter(and_(Meal_table.is_diabetic == "True", Meal_table.dinner == "True",
+                                          Meal_table.calories <= calories)).all()
         elif health_condition == "False" and type_of_meal == "Dinner":
-            return Food.query.filter(and_(Recommendation.is_diabetic == "False", Recommendation.dinner == "True",
-                                          Recommendation.calories <= calories)).all()
+            return Food.query.filter(and_(Meal_table.is_diabetic == "False", Meal_table.dinner == "True",
+                                          Meal_table.calories <= calories)).all()
 
 
 class Food(db.Model):
@@ -724,7 +696,7 @@ class Food(db.Model):
     def sort_food(user_id):
         user_setting = UserSetting.query.filter_by(id=user_id).first()
         is_diabetic = user_setting.is_diabetic
-        type_of_meal = Recommendation.compare_time()
+        type_of_meal = Meal_table.compare_time()
         if is_diabetic == "True" and type_of_meal == "Breakfast":
             return Food.query.filter(and_(Food.is_diabetic == "True", Food.breakfast == "True")).all()
         elif is_diabetic == "False" and type_of_meal == "Breakfast":
@@ -778,6 +750,4 @@ class FoodHistory(db.Model):
     def get_user_food_history(user_id):
         return FoodHistory.query.filter(FoodHistory.user_id == user_id).all()
 
-    @staticmethod
-    def dynamic_plan(deficit):
 
