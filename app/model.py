@@ -23,6 +23,7 @@ class User(db.Model):
     community = db.relationship('Community', backref='community', lazy='dynamic')
     steps = db.relationship('Steps', backref='step', lazy='dynamic')
     usersetting = db.relationship('UserSetting', backref='usersetting', lazy='dynamic')
+    foodhistory = db.relationship('FoodHistory', backref='foodhistory', lazy='dynamic')
 
     def __init__(self, email, password, first_name, last_name, username, gender, age, profile_pic):
         self.email = email
