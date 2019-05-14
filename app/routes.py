@@ -104,6 +104,7 @@ def getuserprofile(current_user):
         'steps_today': user_steps
     }
 
+
     return jsonify(data), 200
 
 
