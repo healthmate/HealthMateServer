@@ -290,10 +290,10 @@ class Steps(db.Model):
     steps_no = db.Column(db.Integer, nullable=False)
     date = db.Column(db.DateTime, nullable=False)
 
-    def __init__(self, user_id, steps_no):
+    def __init__(self, user_id, steps_no, date):
         self.user_id = user_id
         self.steps_no = steps_no
-        self.date = datetime.datetime.now().date()
+        self.date = date
         self.id = uuid.uuid4().__str__()
 
     def save(self):
