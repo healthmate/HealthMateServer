@@ -54,6 +54,7 @@ def login():
                 'username': user.username,
                 'fullname': user.first_name + " " + user.last_name,
                 'profile_pic': user.profile_pic
+
             }
             return response_login(data, 'Successfully logged In', user.encode_auth_token(user.id),
                                   200)
@@ -478,13 +479,16 @@ def check_liker(current_user, post_id):
 @routes.route('/storesteps/<steps>', methods=['POST'])
 @token_required
 def store_steps(current_user, steps):
-    step = Steps(user_id=current_user.id, steps_no=steps)
-    if not Steps.update_if_instance_exist(datetime.datetime.now().date(), current_user.id, steps):
+    values = request.get_json()
+    required = ['date']
+    if not all(k in values for k in required):
+        return 'Missing values', 400
+    localTime = values.get('date')
+    data = localTime.split('-')
+    date = datetime.date(int(data[0]), int(data[1]), int(data[2]))
+    step = Steps(user_id=current_user.id, steps_no=steps, date=date)
+    if not Steps.update_if_instance_exist(date, current_user.id, steps):
         step.save()
-    """challenges = Challenge.get_challenge_within_date_by_user_id(current_user.id, datetime.datetime.now())
-    if challenges:
-        for challenge in challenges:
-            Challenge.update_challenge_steps(challenge.id, steps)"""
 
     return response('success', 'Steps added successfully', 200)
 
