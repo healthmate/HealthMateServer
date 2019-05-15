@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, Blueprint
-from app.model import User, Post, Community, Comments, Likes, Steps, Challenge, UserSetting, Food
+from app.model import User, Post, Community, Comments, Likes, Steps, Challenge, UserSetting, Food, FoodHistory
 import re
 import datetime
 from app.helper import response, response_auth, response_login, token_required
@@ -553,7 +553,7 @@ def update_user_settings(current_user):
                               , values.get('is_diabetic'))
 
     if resp:
-        return response('success', 'successfully updated user settings', 20)
+        return response('success', 'successfully updated user settings', 200)
     else:
         return response('failed', 'Failed update', 400)
 
@@ -578,7 +578,7 @@ def getsettings(current_user):
 
 @routes.route("/food/getcalories", methods=['POST'])
 @token_required
-def getcalories(current_user):
+def getcalories():
     values = request.get_json()
     required = ['foods']
     if not all(k in values for k in required):
@@ -588,3 +588,29 @@ def getcalories(current_user):
     for item in foods:
         calories = calories + Food.getCalories(item)
 
+
+@routes.route("/foodhistory/getuserhistory", methods=['GET'])
+@token_required
+def get_user_history(current_user):
+    user_history = FoodHistory.get_user_food_history(current_user.user_id)
+    data = {
+        'breakfast': user_history.breakfast,
+        'lunch': user_history.lunch,
+        'dinner': user_history.dinner,
+        'date': user_history.date,
+        'calorie_deficit': user_history.calorie_deficit
+    }
+
+    return data
+
+
+@routes.route("/Foodhistory/post", methods=['POST'])
+@token_required
+def post_history(current_user):
+    values = request.get_json()
+    required = ['breakfast', 'lunch', 'dinner', 'date', 'calorie_deficit']
+    if not all(k in values for k in required):
+        return 'Missing values', 400
+    foodhistory = FoodHistory(current_user.id, values.get("breakfast"),
+                              values.get("lunch"), values.get("dinner"), values.get("date"),
+                              values.get("calorie_deficit"))

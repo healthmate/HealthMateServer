@@ -572,13 +572,14 @@ class UserSetting(db.Model):
         goal_weight = user_setting.goal_weight
         average_weight = user_setting.average_weight
         differential = goal_weight - average_weight
+        daily_calorie_goal = user_setting.daily_calorie_goal
         calorie_deficit = FoodHistory.get_user_deficit(user_id)
         if calorie_deficit == 0:
             calorie_required = differential * 7700
-            user_setting.goal_calorie = calorie_required
+            user_setting.goal_calorie = calorie_required - daily_calorie_goal
             db.session.commit()
         else:
-            calorie_required = (differential * 7700) + calorie_deficit
+            calorie_required = (differential * 7700) - daily_calorie_goal + calorie_deficit
             user_setting.goal_calorie = calorie_required
             db.session.commit()
 
