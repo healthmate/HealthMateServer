@@ -591,3 +591,4 @@ def getcalories(current_user):
     foods = values.get("foods")
     for item in foods:
         calories = calories + Food.getCalories(item)
+
