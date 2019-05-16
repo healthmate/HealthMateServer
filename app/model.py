@@ -704,10 +704,9 @@ class Food(db.Model):
         return Food.query.filter_by(id=id).all()
 
     @staticmethod
-    def sort_food(user_id):
+    def sort_food(user_id, type_of_meal):
         user_setting = UserSetting.query.filter_by(id=user_id).first()
         is_diabetic = user_setting.is_diabetic
-        type_of_meal = Meal_table.compare_time()
         if is_diabetic == "True" and type_of_meal == "Breakfast":
             return Food.query.filter(and_(Food.is_diabetic == "True", Food.breakfast == "True")).all()
         elif is_diabetic == "False" and type_of_meal == "Breakfast":

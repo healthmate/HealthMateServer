@@ -578,7 +578,7 @@ def getsettings(current_user):
         'activity_level': setting.activity_level
     }
 
-    return jsonify(data)
+    return jsonify(data), 200
 
 
 @routes.route("/food/getcalories", methods=['POST'])
@@ -599,13 +599,15 @@ def getcalories():
 @token_required
 def get_user_history(current_user):
     user_history = FoodHistory.get_user_food_history(current_user.id)
-    data = {
-        'breakfast': user_history.breakfast,
-        'lunch': user_history.lunch,
-        'dinner': user_history.dinner,
-        'date': user_history.date,
-        'calorie_deficit': user_history.calorie_deficit
-    }
+    data = []
+    for history in user_history:
+        data.append({
+            'breakfast': history.breakfast,
+            'lunch': history.lunch,
+            'dinner': history.dinner,
+            'date': history.date,
+            'calorie_deficit': history.calorie_deficit
+        })
 
     return jsonify(data), 200
 
@@ -633,27 +635,31 @@ def post_history(current_user):
 @token_required
 def get_recommendation(current_user):
     user_recommendation = Meal_table.recommendation_algorithm(current_user.id)
-    data = {
-        'name_of_food': user_recommendation.name_of_food,
-        'calories': user_recommendation.calories,
-        'is_diabetic': user_recommendation.is_diabetic,
-        'breakfast': user_recommendation.breakfast,
-        'lunch': user_recommendation.lunch,
-        'dinner': user_recommendation.dinner
-    }
+    data = []
+    for recommendation in user_recommendation:
+        data.append({
+            'name_of_food': recommendation.name_of_food,
+            'calories': recommendation.calories,
+            'is_diabetic': recommendation.is_diabetic,
+            'breakfast': recommendation.breakfast,
+            'lunch': recommendation.lunch,
+            'dinner': recommendation.dinner
+        })
     return jsonify(data), 200
 
 
-@routes.route("/sortfoods", methods=['GET'])
+@routes.route("/sortfoods/<meal_type>", methods=['GET'])
 @token_required
-def sort_foods(current_user):
-    food_options = Food.sort_food(current_user.id)
-    data = {
-        'name_of_food': food_options.name_of_food,
-        'calories': food_options.calories,
-        'breakfast': food_options.breakfast,
-        'lunch': food_options.lunch,
-        'dinner': food_options.dinner,
-        'is_diabetic': food_options.is_diabetic
-    }
+def sort_foods(current_user, meal_type):
+    food_options = Food.sort_food(current_user.id, meal_type)
+    data = []
+    for food in food_options:
+        data.append({
+            'name_of_food': food.name_of_food,
+            'calories': food.calories,
+            'breakfast': food.breakfast,
+            'lunch': food.lunch,
+            'dinner': food.dinner,
+            'is_diabetic': food.is_diabetic
+        })
     return jsonify(data), 200
