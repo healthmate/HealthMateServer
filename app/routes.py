@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, Blueprint
-from app.model import User, Post, Community, Comments, Likes, Steps, Challenge, UserSetting, Food, FoodHistory
+from app.model import User, Post, Community, Comments, Likes, Steps, Challenge, UserSetting, Food, FoodHistory, \
+    Meal_table
 import re
 import datetime
 from app.helper import response, response_auth, response_login, token_required
@@ -577,7 +578,7 @@ def getsettings(current_user):
         'activity_level': setting.activity_level
     }
 
-    return data
+    return jsonify(data)
 
 
 @routes.route("/food/getcalories", methods=['POST'])
@@ -591,12 +592,13 @@ def getcalories():
     foods = values.get("foods")
     for item in foods:
         calories = calories + Food.getCalories(item)
+    return calories
 
 
 @routes.route("/foodhistory/getuserhistory", methods=['GET'])
 @token_required
 def get_user_history(current_user):
-    user_history = FoodHistory.get_user_food_history(current_user.user_id)
+    user_history = FoodHistory.get_user_food_history(current_user.id)
     data = {
         'breakfast': user_history.breakfast,
         'lunch': user_history.lunch,
@@ -605,7 +607,7 @@ def get_user_history(current_user):
         'calorie_deficit': user_history.calorie_deficit
     }
 
-    return data
+    return jsonify(data), 200
 
 
 @routes.route("/Foodhistory/post", methods=['POST'])
@@ -615,6 +617,43 @@ def post_history(current_user):
     required = ['breakfast', 'lunch', 'dinner', 'date', 'calorie_deficit']
     if not all(k in values for k in required):
         return 'Missing values', 400
+    localTime = values.get('date')
+    data = localTime.split('-')
+    date = datetime.date(int(data[0]), int(data[1]), int(data[2]))
     foodhistory = FoodHistory(current_user.id, values.get("breakfast"),
-                              values.get("lunch"), values.get("dinner"), values.get("date"),
+                              values.get("lunch"), values.get("dinner"), date,
                               values.get("calorie_deficit"))
+    foodhistory.save()
+    daily_calorie = UserSetting.dynamic_goal_calorie(current_user.id)
+    data = {'daily_calorie': daily_calorie}
+    return jsonify(data), 200
+
+
+@routes.route("/getrecommendation", methods=['GET'])
+@token_required
+def get_recommendation(current_user):
+    user_recommendation = Meal_table.recommendation_algorithm(current_user.id)
+    data = {
+        'name_of_food': user_recommendation.name_of_food,
+        'calories': user_recommendation.calories,
+        'is_diabetic': user_recommendation.is_diabetic,
+        'breakfast': user_recommendation.breakfast,
+        'lunch': user_recommendation.lunch,
+        'dinner': user_recommendation.dinner
+    }
+    return jsonify(data), 200
+
+
+@routes.route("/sortfoods", methods=['GET'])
+@token_required
+def sort_foods(current_user):
+    food_options = Food.sort_food(current_user.id)
+    data = {
+        'name_of_food': food_options.name_of_food,
+        'calories': food_options.calories,
+        'breakfast': food_options.breakfast,
+        'lunch': food_options.lunch,
+        'dinner': food_options.dinner,
+        'is_diabetic': food_options.is_diabetic
+    }
+    return jsonify(data), 200

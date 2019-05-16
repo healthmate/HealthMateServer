@@ -576,28 +576,21 @@ class UserSetting(db.Model):
         calorie_deficit = FoodHistory.get_user_deficit(user_id)
         if calorie_deficit == 0:
             calorie_required = differential * 7700
-            user_setting.goal_calorie = calorie_required - daily_calorie_goal
+            new_goal_calorie = calorie_required - daily_calorie_goal
+            user_setting.goal_calorie = new_goal_calorie
+            new_daily_calorie = UserSetting.get_net_calorie(user_id, goal_weight, average_weight,
+                                                            new_goal_calorie)
+            user_setting.daily_calorie_goal = new_daily_calorie
             db.session.commit()
         else:
             calorie_required = (differential * 7700) - daily_calorie_goal + calorie_deficit
-            user_setting.goal_calorie = calorie_required
+            new_goal_calorie = calorie_required
+            user_setting.goal_calorie = new_goal_calorie
+            new_daily_calorie = UserSetting.get_net_calorie(user_id, goal_weight, average_weight,
+                                                            new_goal_calorie)
+            user_setting.daily_calorie_goal = new_daily_calorie
             db.session.commit()
-
-            # @staticmethod
-            # def losebyakg(user_id):
-            #     user_setting = UserSetting.query.filter_by(id=user_id).first()
-            #     goal_weight = user_setting.goal_weight
-            #     average_weight = user_setting.average_weight
-            #     weight_loss = goal_weight - average_weight
-            #     calorie_deficit = FoodHistory.get_user_deficit(user_id)
-            #     if calorie_deficit == 0:
-            #         calorie_required = weight_loss * 7700
-            #         user_setting.goal_calorie = calorie_required
-            #         db.session.commit()
-            #     else:
-            #         calorie_required = (weight_loss * 7700) + calorie_deficit
-            #         user_setting.goal_calorie = calorie_required
-            #         db.session.commit()
+        return new_daily_calorie
 
 
 class Meal_table(db.Model):
@@ -670,25 +663,25 @@ class Meal_table(db.Model):
         type_of_meal = Meal_table.compare_time()
 
         if health_condition == "True" and type_of_meal == "Breakfast":
-            return Food.query.filter(
+            return Meal_table.query.filter(
                 and_(Meal_table.is_diabetic == "True", Meal_table.breakfast == "True",
                      Meal_table.calories <= calories)).all()
         elif health_condition == "False" and type_of_meal == "Breakfast":
-            return Food.query.filter(
+            return Meal_table.query.filter(
                 and_(Meal_table.is_diabetic == "False", Meal_table.breakfast == "True",
                      Meal_table.calories <= calories)).all()
         elif health_condition == "True" and type_of_meal == "Lunch":
-            return Food.query.filter(and_(Meal_table.is_diabetic == "True", Meal_table.lunch == "True",
-                                          Meal_table.calories <= calories)).all()
+            return Meal_table.query.filter(and_(Meal_table.is_diabetic == "True", Meal_table.lunch == "True",
+                                                Meal_table.calories <= calories)).all()
         elif health_condition == "False" and type_of_meal == "Lunch":
-            return Food.query.filter(and_(Meal_table.is_diabetic == "False", Meal_table.lunch == "True",
-                                          Meal_table.calories <= calories)).all()
+            return Meal_table.query.filter(and_(Meal_table.is_diabetic == "False", Meal_table.lunch == "True",
+                                                Meal_table.calories <= calories)).all()
         elif health_condition == "True" and type_of_meal == "Dinner":
-            return Food.query.filter(and_(Meal_table.is_diabetic == "True", Meal_table.dinner == "True",
-                                          Meal_table.calories <= calories)).all()
+            return Meal_table.query.filter(and_(Meal_table.is_diabetic == "True", Meal_table.dinner == "True",
+                                                Meal_table.calories <= calories)).all()
         elif health_condition == "False" and type_of_meal == "Dinner":
-            return Food.query.filter(and_(Meal_table.is_diabetic == "False", Meal_table.dinner == "True",
-                                          Meal_table.calories <= calories)).all()
+            return Meal_table.query.filter(and_(Meal_table.is_diabetic == "False", Meal_table.dinner == "True",
+                                                Meal_table.calories <= calories)).all()
 
 
 class Food(db.Model):
