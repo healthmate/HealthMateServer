@@ -438,7 +438,7 @@ class Challenge(db.Model):
 
 class UserSetting(db.Model):
     __tablename__ = "usersetting"
-    user_id = db.Column(db.String(255), primary_key=True, foreign_key=True, required=True)
+    user_id = db.Column(db.String, db.ForeignKey('users.id'), primary_key=True)
     average_weight = db.Column(db.String, nullable=False)
     height = db.Column(db.String, nullable=False)
     goal_weight = db.Column(db.String(255), nullable=False)
