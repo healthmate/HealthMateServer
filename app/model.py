@@ -638,7 +638,7 @@ class Meal_table(db.Model):
     @staticmethod
     def calculate_calorie_meal_requirement(user_id):
         type_of_meal = Meal_table.compare_time()
-        user_setting = UserSetting.query.filter_by(id=user_id)
+        user_setting = UserSetting.query.filter_by(user_id=user_id)
         net_calorie_goal = user_setting.daily_calorie_goal
         if type_of_meal == "Breakfast":
             calorie_limit = 0.2 * net_calorie_goal
@@ -657,7 +657,7 @@ class Meal_table(db.Model):
 
     @staticmethod
     def get_calorie_limit(user_id, type_of_meal):
-        user_setting = UserSetting.query.filter_by(id=user_id)
+        user_setting = UserSetting.query.filter_by(user_id=user_id)
         net_calorie_goal = user_setting.daily_calorie_goal
         if type_of_meal == "Breakfast":
             calorie_limit = 0.2 * net_calorie_goal
@@ -676,7 +676,7 @@ class Meal_table(db.Model):
 
     @staticmethod
     def recommendation_algorithm(user_id):
-        user_setting = UserSetting.query.filter_by(id=user_id).first()
+        user_setting = UserSetting.query.filter_by(user_id=user_id).first()
         health_condition = user_setting.is_diabetic
         calories = Meal_table.calculate_calorie_meal_requirement(user_id)
         type_of_meal = Meal_table.compare_time()
@@ -724,7 +724,7 @@ class Food(db.Model):
 
     @staticmethod
     def sort_food(user_id, type_of_meal):
-        user_setting = UserSetting.query.filter_by(id=user_id).first()
+        user_setting = UserSetting.query.filter_by(user_id=user_id).first()
         is_diabetic = user_setting.is_diabetic
         if is_diabetic == "True" and type_of_meal == "Breakfast":
             return Food.query.filter(and_(Food.is_diabetic == "True", Food.breakfast == "True")).all()
@@ -799,5 +799,5 @@ class Snacks(db.Model):
 
     @staticmethod
     def get_snacks():
-        snacks = Snacks.query.filterby(id=id).all()
+        snacks = Snacks.query.all()
         return snacks
