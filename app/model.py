@@ -467,7 +467,7 @@ class UserSetting(db.Model):
         return UserSetting.query.filterby(user_id=user_id).first()
 
     @staticmethod
-    def update(user_id, average_weight, goal_weight, is_diabetic, height, activity_level, goal_calorie):
+    def update(user_id, average_weight, goal_weight, is_diabetic, height, activity_level):
 
         instance = UserSetting.query.filter(UserSetting.user_id == user_id).first()
         if instance:
@@ -477,6 +477,7 @@ class UserSetting(db.Model):
             instance.height = height
             instance.activity_level = activity_level
             instance.duration = goal_weight - average_weight
+            goal_calorie = (goal_weight - average_weight)*7700
             instance.daily_calorie_goal = UserSetting.get_net_calorie(user_id, goal_weight, average_weight,
                                                                       goal_calorie)
             instance.weekly_calorie_goal = UserSetting.get_net_calorie(user_id, goal_weight, average_weight,
@@ -638,7 +639,7 @@ class Meal_table(db.Model):
     @staticmethod
     def calculate_calorie_meal_requirement(user_id):
         type_of_meal = Meal_table.compare_time()
-        user_setting = UserSetting.query.filter_by(user_id=user_id)
+        user_setting = UserSetting.query.filter_by(user_id=user_id).first()
         net_calorie_goal = user_setting.daily_calorie_goal
         if type_of_meal == "Breakfast":
             calorie_limit = 0.2 * net_calorie_goal
@@ -657,7 +658,7 @@ class Meal_table(db.Model):
 
     @staticmethod
     def get_calorie_limit(user_id, type_of_meal):
-        user_setting = UserSetting.query.filter_by(user_id=user_id)
+        user_setting = UserSetting.query.filter_by(user_id=user_id).first()
         net_calorie_goal = user_setting.daily_calorie_goal
         if type_of_meal == "Breakfast":
             calorie_limit = 0.2 * net_calorie_goal
@@ -720,7 +721,7 @@ class Food(db.Model):
 
     @staticmethod
     def get_all_meals():
-        return Food.query.filter_by(id=id).all()
+        return Food.query.all()
 
     @staticmethod
     def sort_food(user_id, type_of_meal):

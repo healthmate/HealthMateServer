@@ -549,13 +549,13 @@ def get_all_challenges(current_user):
 @token_required
 def update_user_settings(current_user):
     values = request.get_json()
-    required = ['average_weight', 'goal_weight', 'is_diabetic',
-                ]
+    required = ['average_weight', 'goal_weight', 'is_diabetic', 'height', 'activity_level', 'goal_calories']
 
     if not all(k in values for k in required):
         return 'Missing values', 400
     resp = UserSetting.update(current_user.id, values.get('average_weight'), values.get('goal_weight')
-                              , values.get('is_diabetic'))
+                              , values.get('is_diabetic'), values.get('height'), values.get('activity_level'),
+                              )
 
     if resp:
         return response('success', 'successfully updated user settings', 200)
