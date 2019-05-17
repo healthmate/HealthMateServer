@@ -652,6 +652,25 @@ class Meal_table(db.Model):
             return calorie_limit
 
     """
+    Function that gets the calorie limit
+    """
+
+    @staticmethod
+    def get_calorie_limit(user_id, type_of_meal):
+        user_setting = UserSetting.query.filter_by(id=user_id)
+        net_calorie_goal = user_setting.daily_calorie_goal
+        if type_of_meal == "Breakfast":
+            calorie_limit = 0.2 * net_calorie_goal
+            return calorie_limit
+
+        elif type_of_meal == "Lunch":
+            calorie_limit = 0.4 * net_calorie_goal
+            return calorie_limit
+        else:
+            calorie_limit = 0.4 * net_calorie_goal
+            return calorie_limit
+
+    """
     calculates the calorie limit for breakfast, lunch and dinner
     """
 

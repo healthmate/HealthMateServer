@@ -652,6 +652,7 @@ def get_recommendation(current_user):
 @token_required
 def sort_foods(current_user, meal_type):
     food_options = Food.sort_food(current_user.id, meal_type)
+    calorie_limit = Meal_table.get_calorie_limit(current_user.id, meal_type)
     data = []
     for food in food_options:
         data.append({
@@ -660,7 +661,8 @@ def sort_foods(current_user, meal_type):
             'breakfast': food.breakfast,
             'lunch': food.lunch,
             'dinner': food.dinner,
-            'is_diabetic': food.is_diabetic
+            'is_diabetic': food.is_diabetic,
+            'calorie_limit': calorie_limit
         })
     return jsonify(data), 200
 

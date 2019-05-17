@@ -4,12 +4,13 @@
     <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoredPackages">
         <value>
-          <list size="5">
+          <list size="6">
             <item index="0" class="java.lang.String" itemvalue="PyJWT" />
             <item index="1" class="java.lang.String" itemvalue="requests" />
             <item index="2" class="java.lang.String" itemvalue="google-api-core" />
             <item index="3" class="java.lang.String" itemvalue="simplejson" />
             <item index="4" class="java.lang.String" itemvalue="Flask-RESTful" />
+            <item index="5" class="java.lang.String" itemvalue="Flask-Cors" />
           </list>
         </value>
       </option>
