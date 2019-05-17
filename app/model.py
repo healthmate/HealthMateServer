@@ -489,13 +489,13 @@ class UserSetting(db.Model):
 
     @staticmethod
     def centimetertoinches(user_id):
-        user_setting = UserSetting.query.filter_by(id=user_id).first()
+        user_setting = UserSetting.query.filter_by(user_id=user_id).first()
         inches = user_setting.height / 2.54
         return inches
 
     @staticmethod
     def kgtopounds(user_id):
-        user_setting = UserSetting.query.filter_by(id=user_id).first()
+        user_setting = UserSetting.query.filter_by(user_id=user_id).first()
         pounds = user_setting.average_weight * 2.205
         return pounds
 
@@ -520,7 +520,7 @@ class UserSetting(db.Model):
     @staticmethod
     def calorie_needs(user_id):
         required_bmr = UserSetting.calculate_bmr(user_id)
-        user_setting = UserSetting.query.filter_by(id=user_id).first()
+        user_setting = UserSetting.query.filter_by(user_id=user_id).first()
         activity_level = user_setting.actvity_level
 
         if activity_level == "Low":
@@ -569,7 +569,7 @@ class UserSetting(db.Model):
 
     @staticmethod
     def dynamic_goal_calorie(user_id):
-        user_setting = UserSetting.query.filter_by(id=user_id).first()
+        user_setting = UserSetting.query.filter_by(user_id=user_id).first()
         goal_weight = user_setting.goal_weight
         average_weight = user_setting.average_weight
         differential = goal_weight - average_weight
