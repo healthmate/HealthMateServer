@@ -439,15 +439,15 @@ class Challenge(db.Model):
 class UserSetting(db.Model):
     __tablename__ = "usersetting"
     user_id = db.Column(db.String, db.ForeignKey('users.id'), primary_key=True)
-    average_weight = db.Column(db.String, nullable=False)
-    height = db.Column(db.String, nullable=False)
-    goal_weight = db.Column(db.String(255), nullable=False)
-    duration = db.Column(db.Integer, nullable=False)
-    daily_calorie_goal = db.Column(db.String, nullable=False)
-    weekly_calorie_goal = db.Column(db.Integer, nullable=False)
-    goal_calorie = db.Column(db.Integer, nullable=False)
-    is_diabetic = db.Column(db.String, nullable=False)
-    activity_level = db.Column(db.String, nullable=False)
+    average_weight = db.Column(db.String, nullable=True)
+    height = db.Column(db.String, nullable=True)
+    goal_weight = db.Column(db.String(255), nullable=True)
+    duration = db.Column(db.Integer, nullable=True)
+    daily_calorie_goal = db.Column(db.String, nullable=True)
+    weekly_calorie_goal = db.Column(db.Integer, nullable=True)
+    goal_calorie = db.Column(db.Integer, nullable=True)
+    is_diabetic = db.Column(db.String, nullable=True)
+    activity_level = db.Column(db.String, nullable=True)
 
     def __init__(self, user_id):
         self.user_id = user_id

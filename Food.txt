@@ -1,0 +1,58 @@
+1|Sugar Bread|20|True|False|False|False
+2|fried egg|90|True|True|True|True 
+3|omelette|96|True|True|True|True
+4|Poached eggs|72|True|True|True|True
+5|Kenkey|1440|False|True|False|False
+6|Plain Rice|240|False|True|True|True
+7|Plantain fufu|536|False|True|False|False
+8|Chicken drumstick|233|False|True|True|True
+9|Chicken thigh|238|True|True|True|True
+10|Beef|300|True|True|True|True
+11|Cowskin(welle)|123|True|True|True|True
+12|Pork|230|True|True|True|True
+13|Goat|215|True|True|True|True
+14|Milo|34|True|True|True|False
+15|Plantain|220|True|True|True|False
+16|Plantain(fried)|68|True|True|True|False	
+17|Fried Yam|418|False|True|True|True
+18|tuo zaafi|720|False|True|False|False
+19|waakye|432|False|True|True|False
+20|chicken fried rice|355|False|True|True|False
+21|shrimp fried rice|445|False|True|True|False
+22|vegetable fried rice|257|False|True|True|False
+23|jollof rice|260|False|True|True|False
+24|lotte|22|True|True|False|False
+25|Gari|110|False|True|False|False
+26|Kookoo|150|True|False|False|False
+27|Tom brown|113|True|False|False|False
+28|Chicken and peanut stew|539|False|True|False|False
+29|Boiled yam with salt|32|False|True|True|True
+30|Shito|95|True|True|True|True
+31|Kontomire with agushie|218|False|True|True|True 
+32|Egg stew|400|True|True|True|True
+33|Koose|102|True|False|False|False
+34|Sugar bread|180|True|False|False|False
+35|Palm-Nut soup|265|False|True|False|False
+36|Kelewele|252|False|True|True|False
+37|Okro stew|248|False|True|False|False
+38|Groundnut soup|201|False|True|False|False
+39|Boiled egg|78|True|True|True|True
+40|Boiled Meat|143|True|True|True|True
+41|Fried Meat|253|True|True|True|True
+42|waakye|390|True|True|True|False
+43|Fried fish|100|True|True|True|True
+44|Fried chicken-leg|290|True|True|True|True
+45|Fried Chicken-wings|80|True|True|True|True
+46|Light Soup|200|False|True|False|False
+47|Garri|370|False|True|False|False
+48|Egusi Soup|462|False|True|False|False
+49|Banku|364|False|True|False|False
+50|French Fries|170|False|True|True|False
+51|Red-Red|105|False|True|True|True
+52|Wheat bread|246|True|False|False|True
+53|Cornedbeef stew|150|False|True|True|False
+54|Whole grain cereal|180|True|False|False|True
+55|Wheat Meal|352|False|True|True|True
+56|Basmati|180|False|True|False|False
+57|Green tea|0|True|False|True|True
+58|Oat Meal|72|True|False|True|True

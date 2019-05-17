@@ -1,0 +1,14 @@
+1|Banana|60
+2|Pineapple|80
+3|Apple|60
+4|Orange|47
+5|grapes|18
+6|watermelon|93
+7|Avocado pear|190
+8|Strawberry|6
+9|Paw-Paw|45
+10|ice cream|170
+11|Moser rote(ghana chocolate)|140
+12|chocopie|140 
+13|Burgar peanuts|280
+14|Cherry|5

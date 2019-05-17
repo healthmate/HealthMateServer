@@ -678,3 +678,5 @@ def get_snacks():
             'calories': snack.calories
         })
     return jsonify(data), 200
+
+##\copy snacks FROM '/Users/coderiddles/Desktop/HealthMate/Server/snacks.txt' with (format text,delimiter '|');

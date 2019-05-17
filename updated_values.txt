@@ -7,29 +7,32 @@
 7|Vegetable rice with chicken wings|338|False|True|True|True
 8|Chicken fried rice|355|False|True|True|True
 9|Chicken fried rice with chicken wings|436|False|True|True|True
-10|Fried Yam with shito|513|False|True|True|True
-11|Fried Yam,shito and chicken wings| 594|False|True|True|True
-12|Fried yam and egg sauce|818|False|True|True|True
-13|Fried Yam, egg sauce and Chicken Wings|899|False|True|True|True
+10|Fried Yam with shito|513|True|False|True|True
+11|Fried Yam,shito and chicken wings| 594|True|False|True|True
+12|Fried yam and egg sauce|818|True|False|True|True
+13|Fried Yam, egg sauce and Chicken Wings|899|True|False|True|True
 14|Sugar bread, egg stew and Milo|640|False|True|False|True
 15|Shrimp Fried Rice|445|False|True|True|True
-16|Banku, pepper and tilapia|529|False|False|True|True
-17|Banku, okro stew and meat|865|False|False|True|True
-18|Banku and groundnut soup|565|False|False|True|True
-19|Fufu and Light Soup|736|False|False|True|True
-20|Fufu and Egusi Soup|998|False|False|True|True
+16|Banku, pepper and tilapia|529|False|False|True|False
+17|Banku, okro stew and meat|865|False|False|True|False
+18|Banku and groundnut soup|565|False|False|True|False
+19|Fufu and Light Soup|736|False|False|True|False
+20|Fufu and Egusi Soup|998|False|False|True|False
 21|Jollof Rice and Fried Chicken Leg|550|False|True|True|True
 22|Jollof Rice and Fried Fish|360|False|True|True|True
 23|Plain Rice and egg stew with Fish 100g(fried)|740|False|True|True|True
 24|Vegetable rice with fish|357|False|True|True|True
-25|Fried Yam with shito and Fish|613|False|True|True|True
-26|Fried Yam with Egg sauce and Fish|918|False|True|True|True
-27|Garri and Egusi Soup|832|False|False|True|True
-28|Garri and Okro Stew|618|False|False|True|True
-29|Garri and Light Soup|570|False|False|True|True
-30|Kontomire with agushie|218|False|False|True|True
+25|Fried Yam with shito and Fish|613|True|True|True|True
+26|Fried Yam with Egg sauce and Fish|918|True|False|True|True
+27|Garri and Egusi Soup|832|False|False|True|False
+28|Garri and Okro Stew|618|False|False|True|False
+29|Garri and Light Soup|570|False|False|True|False
+30|Kontomire with agushie|218|True|False|True|True
 31|Waakye and Chicken wings|470|False|True|True|True
 32|Waakye and Fish|490|False|True|True|True
-33|Garri and Okro Stew with Boiled Meat|761|False|False|True|True
-34|Garri and Egusi Soup with Boiled Meat|975|False|False|True|True
+33|Garri and Okro Stew with Boiled Meat|761|False|False|True|False
+34|Garri and Egusi Soup with Boiled Meat|975|False|False|True|False
 35|Plain Rice and Egg stew|640|False|True|True|True
+36|Whole Grain Cereal|130|True|True|False|False
+37|Wheat Bread and fried egg|338|True|True|False|False
+38|Basmati rice with egg stew and Fish(fried)|680|True|False|True|True
