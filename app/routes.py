@@ -549,7 +549,7 @@ def get_all_challenges(current_user):
 @token_required
 def update_user_settings(current_user):
     values = request.get_json()
-    required = ['average_weight', 'goal_weight', 'is_diabetic', 'height', 'activity_level', 'goal_calories']
+    required = ['average_weight', 'goal_weight', 'is_diabetic', 'height', 'activity_level']
 
     if not all(k in values for k in required):
         return 'Missing values', 400

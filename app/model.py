@@ -476,8 +476,8 @@ class UserSetting(db.Model):
             instance.is_diabetic = is_diabetic
             instance.height = height
             instance.activity_level = activity_level
-            instance.duration = goal_weight - average_weight
-            goal_calorie = (goal_weight - average_weight)*7700
+            instance.duration = int(goal_weight) - int(average_weight)
+            goal_calorie = (int(goal_weight) - int(average_weight))*7700
             instance.daily_calorie_goal = UserSetting.get_net_calorie(user_id, goal_weight, average_weight,
                                                                       goal_calorie)
             instance.weekly_calorie_goal = UserSetting.get_net_calorie(user_id, goal_weight, average_weight,
