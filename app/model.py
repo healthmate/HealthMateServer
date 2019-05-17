@@ -478,6 +478,7 @@ class UserSetting(db.Model):
             instance.activity_level = activity_level
             instance.duration = int(goal_weight) - int(average_weight)
             goal_calorie = (int(goal_weight) - int(average_weight))*7700
+            db.session.commit()
             instance.daily_calorie_goal = UserSetting.get_net_calorie(user_id, int(goal_weight), int(average_weight),
                                                                       goal_calorie)
             instance.weekly_calorie_goal = UserSetting.get_net_calorie(user_id, int(goal_weight), int(average_weight),
