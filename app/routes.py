@@ -554,7 +554,7 @@ def update_user_settings(current_user):
     if not all(k in values for k in required):
         return 'Missing values', 400
     resp = UserSetting.update(current_user.id, values.get('average_weight'), values.get('goal_weight')
-                              , values.get('is_diabetic'), values.get('height'), values.get('activity_level'),
+                              , values.get('is_diabetic'), values.get('height'), values.get('activity_level')
                               )
 
     if resp:
