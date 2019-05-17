@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request, Blueprint
 from app.model import User, Post, Community, Comments, Likes, Steps, Challenge, UserSetting, Food, FoodHistory, \
-    Meal_table
+    Meal_table, Snacks
 import re
 import datetime
 from app.helper import response, response_auth, response_login, token_required
@@ -616,14 +616,14 @@ def get_user_history(current_user):
 @token_required
 def post_history(current_user):
     values = request.get_json()
-    required = ['breakfast', 'lunch', 'dinner', 'date', 'calorie_deficit']
+    required = ['breakfast', 'brunch', 'lunch', 'lunner', 'dinner', 'date', 'calorie_deficit']
     if not all(k in values for k in required):
         return 'Missing values', 400
     localTime = values.get('date')
     data = localTime.split('-')
     date = datetime.date(int(data[0]), int(data[1]), int(data[2]))
-    foodhistory = FoodHistory(current_user.id, values.get("breakfast"),
-                              values.get("lunch"), values.get("dinner"), date,
+    foodhistory = FoodHistory(current_user.id, values.get("breakfast"), values.get("brunch"),
+                              values.get("lunch"), values.get("lunner"), values.get("dinner"), date,
                               values.get("calorie_deficit"))
     foodhistory.save()
     daily_calorie = UserSetting.dynamic_goal_calorie(current_user.id)
@@ -661,5 +661,18 @@ def sort_foods(current_user, meal_type):
             'lunch': food.lunch,
             'dinner': food.dinner,
             'is_diabetic': food.is_diabetic
+        })
+    return jsonify(data), 200
+
+
+@routes.route("/getsnacks", methods=['GET'])
+@token_required
+def get_snacks():
+    snack_options = Snacks.get_snacks()
+    data = []
+    for snack in snack_options:
+        data.append({
+            'name_of_snack': snack.name_of_snack,
+            'calories': snack.calories
         })
     return jsonify(data), 200

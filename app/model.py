@@ -734,15 +734,19 @@ class FoodHistory(db.Model):
     id = db.Column(db.String, primary_key=True)
     user_id = db.Column(db.String, db.ForeignKey('users.id'))
     breakfast = db.Column(db.String(255), nullable=True)
+    brunch = db.Column(db.String(255), nullable=True)
     lunch = db.Column(db.String(255), nullable=True)
+    lunner = db.Column(db.String(255), nullable=True)
     dinner = db.Column(db.String(255), nullable=True)
     date = db.Column(db.DateTime, nullable=False)
     calorie_deficit = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, user_id, breakfast, lunch, dinner, date, calorie_deficit):
+    def __init__(self, user_id, breakfast, lunch, dinner, date, calorie_deficit, brunch, lunner):
         self.user_id = user_id
         self.breakfast = breakfast
+        self.brunch = brunch
         self.lunch = lunch
+        self.lunner = lunner
         self.dinner = dinner
         self.date = date
         self.calorie_deficit = calorie_deficit
@@ -766,3 +770,15 @@ class FoodHistory(db.Model):
         user_history = FoodHistory.query.filterby(user_id == user_id).first()
         deficit = user_history.calorie_deficit
         return deficit
+
+
+class Snacks(db.Model):
+    __tablename__ = "snacks"
+    snacks_id = db.Column(db.Integer, primary_key=True)
+    name_of_snack = db.Column(db.String(255), nullable=False)
+    calories = db.Column(db.Integer, nullable=False)
+
+    @staticmethod
+    def get_snacks():
+        snacks = Snacks.query.filterby(id=id).all()
+        return snacks
