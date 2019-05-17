@@ -802,3 +802,4 @@ class Snacks(db.Model):
     def get_snacks():
         snacks = Snacks.query.all()
         return snacks
+
