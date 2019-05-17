@@ -478,9 +478,9 @@ class UserSetting(db.Model):
             instance.activity_level = activity_level
             instance.duration = int(goal_weight) - int(average_weight)
             goal_calorie = (int(goal_weight) - int(average_weight))*7700
-            instance.daily_calorie_goal = UserSetting.get_net_calorie(user_id, goal_weight, average_weight,
+            instance.daily_calorie_goal = UserSetting.get_net_calorie(user_id, int(goal_weight), int(average_weight),
                                                                       goal_calorie)
-            instance.weekly_calorie_goal = UserSetting.get_net_calorie(user_id, goal_weight, average_weight,
+            instance.weekly_calorie_goal = UserSetting.get_net_calorie(user_id, int(goal_weight), int(average_weight),
                                                                        goal_calorie) * 7
 
             db.session.commit()
@@ -490,13 +490,13 @@ class UserSetting(db.Model):
     @staticmethod
     def centimetertoinches(user_id):
         user_setting = UserSetting.query.filter_by(user_id=user_id).first()
-        inches = user_setting.height / 2.54
+        inches = int(user_setting.height) / 2.54
         return inches
 
     @staticmethod
     def kgtopounds(user_id):
         user_setting = UserSetting.query.filter_by(user_id=user_id).first()
-        pounds = user_setting.average_weight * 2.205
+        pounds = int(user_setting.average_weight) * 2.205
         return pounds
 
     @staticmethod
@@ -570,10 +570,10 @@ class UserSetting(db.Model):
     @staticmethod
     def dynamic_goal_calorie(user_id):
         user_setting = UserSetting.query.filter_by(user_id=user_id).first()
-        goal_weight = user_setting.goal_weight
-        average_weight = user_setting.average_weight
+        goal_weight = int(user_setting.goal_weight)
+        average_weight = int(user_setting.average_weight)
         differential = goal_weight - average_weight
-        daily_calorie_goal = user_setting.daily_calorie_goal
+        daily_calorie_goal = int(user_setting.daily_calorie_goal)
         calorie_deficit = FoodHistory.get_user_deficit(user_id)
         if calorie_deficit == 0:
             calorie_required = differential * 7700
@@ -640,7 +640,7 @@ class Meal_table(db.Model):
     def calculate_calorie_meal_requirement(user_id):
         type_of_meal = Meal_table.compare_time()
         user_setting = UserSetting.query.filter_by(user_id=user_id).first()
-        net_calorie_goal = user_setting.daily_calorie_goal
+        net_calorie_goal = int(user_setting.daily_calorie_goal)
         if type_of_meal == "Breakfast":
             calorie_limit = 0.2 * net_calorie_goal
             return calorie_limit
@@ -659,7 +659,7 @@ class Meal_table(db.Model):
     @staticmethod
     def get_calorie_limit(user_id, type_of_meal):
         user_setting = UserSetting.query.filter_by(user_id=user_id).first()
-        net_calorie_goal = user_setting.daily_calorie_goal
+        net_calorie_goal = int(user_setting.daily_calorie_goal)
         if type_of_meal == "Breakfast":
             calorie_limit = 0.2 * net_calorie_goal
             return calorie_limit
