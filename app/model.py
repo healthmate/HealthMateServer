@@ -476,7 +476,7 @@ class UserSetting(db.Model):
             instance.is_diabetic = is_diabetic
             instance.height = height
             instance.activity_level = activity_level
-            instance.duration = int(goal_weight) - int(average_weight)
+            instance.duration = abs(int(goal_weight) - int(average_weight))
             goal_calorie = (int(goal_weight) - int(average_weight))*7700
             instance.goal_calorie = goal_calorie
             db.session.commit()
@@ -557,19 +557,19 @@ class UserSetting(db.Model):
 
         if differential == 0:
             calorie_goal = average_calorie
-            return calorie_goal
+            return round(calorie_goal)
 
         elif differential > 0:
             required_calorie_goal = goal_calorie
             required_calorie = required_calorie_goal / differential
             calorie_goal = average_calorie + required_calorie / 7
-            return calorie_goal
+            return round(calorie_goal)
 
         else:
             required_calorie_goal = goal_calorie
             required_calorie = required_calorie_goal / (average_weight - goal_weight)
             calorie_goal = average_calorie + (required_calorie / 7)
-            return calorie_goal
+            return round(calorie_goal)
 
     @staticmethod
     def dynamic_goal_calorie(user_id):
