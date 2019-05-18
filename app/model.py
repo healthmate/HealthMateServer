@@ -524,7 +524,7 @@ class UserSetting(db.Model):
     def calorie_needs(user_id):
         required_bmr = UserSetting.calculate_bmr(user_id)
         user_setting = UserSetting.query.filter_by(user_id=user_id).first()
-        activity_level = user_setting.actvity_level
+        activity_level = user_setting.activity_level
 
         if activity_level == "Low":
             total_bmr = required_bmr * 1.2
