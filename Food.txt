@@ -1,4 +1,4 @@
-1|Sugar Bread|20|True|False|False|False
+1|Butter Bread|120|True|False|False|False
 2|fried egg|90|True|True|True|True 
 3|omelette|96|True|True|True|True
 4|Poached eggs|72|True|True|True|True
