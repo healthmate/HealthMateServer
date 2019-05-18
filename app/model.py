@@ -478,6 +478,7 @@ class UserSetting(db.Model):
             instance.activity_level = activity_level
             instance.duration = int(goal_weight) - int(average_weight)
             goal_calorie = (int(goal_weight) - int(average_weight))*7700
+            instance.goal_calorie = goal_calorie
             db.session.commit()
 
             instance = UserSetting.query.filter(UserSetting.user_id == user_id).first()
