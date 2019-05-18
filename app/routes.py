@@ -669,7 +669,7 @@ def sort_foods(current_user, meal_type):
 
 @routes.route("/getsnacks", methods=['GET'])
 @token_required
-def get_snacks():
+def get_snacks(current_user):
     snack_options = Snacks.get_snacks()
     data = []
     for snack in snack_options:
