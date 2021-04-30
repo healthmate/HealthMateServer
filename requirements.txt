@@ -24,7 +24,7 @@ python-editor==1.0.3
 python-jwt==3.2.3
 PyYAML==3.13
 requests==2.18.4
-rsa==4.0
+rsa==4.7
 simplejson==3.13.2
 SQLAlchemy==1.2.14
 tornado==5.1.1
