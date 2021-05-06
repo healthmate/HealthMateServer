@@ -6,7 +6,7 @@ cachetools==3.0.0
 decorator==4.3.0
 Flask==1.0.2
 Flask-Bcrypt==0.7.1
-Flask-Cors==3.0.6
+Flask-Cors==3.0.9
 Flask-Migrate==2.3.0
 Flask-RESTful==0.3.6
 Flask-Script==2.0.6
